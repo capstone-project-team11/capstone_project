@@ -1,0 +1,59 @@
+가장 먼저 실행되는 기점
+app.js를 가져와서 컴포넌트로 등록하는 과정임 -> app.js에 작성된 내용을 봄
+
+app.js
+프로그램 코드와 컴포넌트가 xml문서처럼 결합된 형태 = jsx
+
+app.json
+프로젝트의 이름과 앱의 이름이 작성되어 있음
+배포단계에서 사용
+
+android/
+안드로이드 네이티브 모듈을 담당하는 부분
+react-native에서 지원하지 않는 기능들을 사용하기 위해 네이티브 모듈을 직접 구현할 필요가 있음
+공개 모듈 사용을 위해 dependency등을 설정해야함
+
+ios/
+ios 네이티브 모듈을 담당하는 부분
+
+node_modules/
+프로젝트와 관련된 모듈
+npm을 통해 설치한 모듈도 이곳에 위치하게 됨
+
+package.json
+프로젝트와 관련된 모듈들이 기록된 파일로 모듈들의 버전관리를 하게되는 부분
+
+yarn.lock
+package.json과 유사
+
+jsx 문법을 사용하는 이유는 가독성과 편의성을 높일 수 있기 때문이다.
+jsx 안에서 javascript 객체를 사용하기 위해서는 {}로 감싸주어야 한다.!!(중요)
+
+jsx를 사용하기 위해서는 react를 import해야 함. react가 jsx를 자바스크립트 형태로 변환해주기 때문!
+
+export default는 특정 변수를 외부에서 사용할 수 있도록 해줌
+
+2
+state와 props
+state에는 현재 컴포넌트의 화면을 그리는 것과 관련된 대다수의 값들을 담음
+props에는 상위 컴포넌트에서 전달받은 값이 담겨있으며 변경 불가능
+ex) '환영합니다 000님'의 경우 '환영합니다'와 '님'은 변할 필요가 없기 때문에
+굳이 state에 담지 않아도 됨. 하지만 000의 경우 매번 바뀌기 때문에 이는
+state에 담겨야 하며 state에 저장된 값을 render하는 방식임
+
+View 크기를 결정하는 속성
+flex: 크기를 비율로 설정(부모 view 크기의 특정 비율만큼 차지)
+width,height: 숫자를 넣으면 고정 크기, %를 넣으면 화면 크기에 따른 상대적 크기
+(부모 view에 해당하는 %만큼 할당)
+flex와 %는 부모의 크기에 영향을 받으므로 이 속성을 사용 시에는 부모의 크기 확인!
+
+컴포넌트를 세로로 쌓기(flex direction) -> flexDirection
+row 행, column 열
+
+수직 정렬 alignItems
+flex-start 상단 / center 중단 / flex-end 하단 / stretch 상단부터 하단까지 늘이기
+justifyContent : 공백이 있는 상태로 정렬
+space-between : 양 끝을 기점으로 요소간의 거리를 균등하게 정렬
+space-around : 공백을 포함한 상태로 균등하게 정렬
+
+TouchableOpacity 터치 이벤트(onPress 등)를 사용할 수 있는 view
