@@ -60,7 +60,7 @@
     - Get/ 'contents/capsule-id/:capsuleId'     contentID 
     
     - Post/ './contents/'   content 
-    ![image](https://user-images.githubusercontent.com/48249549/83011608-1ac4f080-a055-11ea-89af-9f2577b247d4.png)
+    ![image](https://user-images.githubusercontent.com/48249549/83015039-c58bdd80-a05a-11ea-9604-dcc080c1c159.png)
 
     - Put/ './contents/'    Dont need 
 
