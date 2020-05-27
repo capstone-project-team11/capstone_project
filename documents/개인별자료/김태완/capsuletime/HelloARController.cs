@@ -1,23 +1,4 @@
-//-----------------------------------------------------------------------
-// <copyright file="HelloARController.cs" company="Google">
-//
-// Copyright 2017 Google LLC. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-// http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-//
-// </copyright>
-//-----------------------------------------------------------------------
-
+//ARcore test
 namespace GoogleARCore.Examples.HelloAR
 {
     using System.Collections.Generic;
@@ -38,27 +19,31 @@ namespace GoogleARCore.Examples.HelloAR
     {
         /// <summary>
         /// The first-person camera being used to render the passthrough camera image (i.e. AR
-        /// background).
+        /// background). 사용자 관점의 AR카메라
         /// </summary>
         public Camera FirstPersonCamera;
 
         /// <summary>
         /// A prefab to place when a raycast from a user touch hits a vertical plane.
+        /// 수직상의 접촉 평면
         /// </summary>
         public GameObject GameObjectVerticalPlanePrefab;
 
         /// <summary>
         /// A prefab to place when a raycast from a user touch hits a horizontal plane.
+        /// 수평상의 접촉 평면
         /// </summary>
         public GameObject GameObjectHorizontalPlanePrefab;
 
         /// <summary>
         /// A prefab to place when a raycast from a user touch hits a feature point.
+        /// 터치 시 지점
         /// </summary>
         public GameObject GameObjectPointPrefab;
 
         /// <summary>
         /// The rotation in degrees need to apply to prefab when it is placed.
+        /// 오브젝트 생성시 AR카메라의 시점을 기준으로 회전
         /// </summary>
         private const float k_PrefabRotation = 180.0f;
 
@@ -75,11 +60,13 @@ namespace GoogleARCore.Examples.HelloAR
         {
             // Enable ARCore to target 60fps camera capture frame rate on supported devices.
             // Note, Application.targetFrameRate is ignored when QualitySettings.vSyncCount != 0.
+            // unity 진행 속도를 초당 60프레임으로 랜더링
             Application.targetFrameRate = 60;
         }
 
         /// <summary>
         /// The Unity Update() method.
+        /// unity 실행 후 지속적인 변화값
         /// </summary>
         public void Update()
         {
@@ -138,18 +125,18 @@ namespace GoogleARCore.Examples.HelloAR
                         prefab = GameObjectHorizontalPlanePrefab;
                     }
 
-                    // Instantiate prefab at the hit pose.������Ʈ ����
+                    // Instantiate prefab at the hit pose.오브젝트 생성
                     var gameObject = Instantiate(prefab, hit.Pose.position, hit.Pose.rotation);
 
                     // Compensate for the hitPose rotation facing away from the raycast (i.e.
-                    // camera).������Ʈ�� ī�޶� �������� ȸ��
+                    // camera).오브젝트를 카메라 방향으로 회전
                     gameObject.transform.Rotate(0, k_PrefabRotation, 0, Space.Self);
 
                     // Create an anchor to allow ARCore to track the hitpoint as understanding of
                     // the physical world evolves.
                     var anchor = hit.Trackable.CreateAnchor(hit.Pose);
 
-                    // Make game object a child of the anchor.������Ʈ�� ��Ŀ�� ������ ��ġ ����
+                    // Make game object a child of the anchor.오브젝트를 앵커에 하위로 위치 선언
                     gameObject.transform.parent = anchor.transform;
                 }
             }
