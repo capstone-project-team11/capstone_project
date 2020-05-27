@@ -1,4 +1,5 @@
-﻿using System.Collections;
+//capsule tail motion 정의
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
