@@ -16,7 +16,10 @@
 
 ## 9-10 주차 Progress
 
-### NodeJS, mysql를 이용한 Restful API 구현
+### NodeJS, mysql를 이용한 Restful API 구현 
+
+https://github.com/Err0rCode7/nodejs-httpserver 
+
 ---
 #### Used Lib
 - express
@@ -67,7 +70,9 @@
     - Delete/ './contents/'     Dont need 
 
 
-### Kotlin과 Java를 이용한 Login App Test
+### Kotlin과 Java를 이용한 Login App Test 
+https://github.com/Err0rCode7/capsule-time-android 
+
 ---
 #### Used Lib
 - Retrofit2
