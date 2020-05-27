@@ -1,4 +1,5 @@
-﻿using System.Collections;
+//capsule 오브젝트의 unity 내에서의 모션을 정의
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
