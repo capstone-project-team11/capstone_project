@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+//GPS test code  현재 위치의 위도와 경도를 불러온다.
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 using System;
