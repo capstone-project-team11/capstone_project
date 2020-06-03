@@ -34,40 +34,63 @@ https://github.com/Err0rCode7/nodejs-httpserver
 ---
 #### 구현된 RestAPI - End Point
 
-- user 
-    - Get/ './users/'   all of users 
-    ![image](https://user-images.githubusercontent.com/48249549/83009436-bb191600-a051-11ea-90bf-ddceab46c525.png)
+(2020/05/18 ~ 2020/05/27)
 
-    - Get/ './users/:id/'    user 
-    ![image](https://user-images.githubusercontent.com/48249549/83009360-991f9380-a051-11ea-96f6-38c142a5fd7e.png)
+---
 
-    - Post/ './users/'  register user 
-    ![image](https://user-images.githubusercontent.com/48249549/83010262-f23bf700-a052-11ea-9d1a-b228d7dba562.png)
+- users 
+    - Get/ `./users/`
+    - Response JSON about all of users 
 
-    - Put/ './users/'   update user 
-    ![image](https://user-images.githubusercontent.com/48249549/83010799-ca00c800-a053-11ea-9157-bc7a4133978b.png)
+        ![image](https://user-images.githubusercontent.com/48249549/83009436-bb191600-a051-11ea-90bf-ddceab46c525.png)
 
-    - Delete/ './users/'    delete user 
-    ![image](https://user-images.githubusercontent.com/48249549/83010614-7d1cf180-a053-11ea-9708-f793fbabf7d1.png)
-    ![image](https://user-images.githubusercontent.com/48249549/83009810-472b3d80-a052-11ea-8b82-b0fa405eecbf.png)
+    - Get/ `./users/:id/` 
+    - Response JSON about a user
+
+        ![image](https://user-images.githubusercontent.com/48249549/83009360-991f9380-a051-11ea-96f6-38c142a5fd7e.png)
+
+    - Post/ `./users/` 
+    - Register a user ( Inster a user ) 
+
+        ![image](https://user-images.githubusercontent.com/48249549/83010262-f23bf700-a052-11ea-9d1a-b228d7dba562.png)
+
+    - Put/ `./users/` 
+    - Update data of a user 
+
+        ![image](https://user-images.githubusercontent.com/48249549/83010799-ca00c800-a053-11ea-9157-bc7a4133978b.png)
+
+    - Delete/ `./users/` 
+    - Delete a user 
+
+        ![image](https://user-images.githubusercontent.com/48249549/83010614-7d1cf180-a053-11ea-9708-f793fbabf7d1.png) 
+
+        ![image](https://user-images.githubusercontent.com/48249549/83009810-472b3d80-a052-11ea-8b82-b0fa405eecbf.png)
     ---
-    - Post/ './users/auth/'     authorization(login) user 
-
-        아래의 어플 화면으로 확인 가능
+    - Post/ `./users/auth/` 
+    - Check authorization(login) of a user 
+    - [Android](https://github.com/Err0rCode7/capsule-time-android) 에서 테스트 완료
 
 - contents ( image or video )
 
-    - Get/ './contents/:contentId'    content 
-    ![image](https://user-images.githubusercontent.com/48249549/83011078-4693a680-a054-11ea-9e0a-2ee000d7607d.png)
+    - Get/ `./contents/:contentId` 
+    - Response content with content ID 
 
-    - Get/ 'contents/capsule-id/:capsuleId'     contentID 
+        ![image](https://user-images.githubusercontent.com/48249549/83011078-4693a680-a054-11ea-9e0a-2ee000d7607d.png)
+
+    - Get/ `contents/capsule-id/:capsuleId` 
+    - Response contentID 
     
-    - Post/ './contents/'   content 
-    ![image](https://user-images.githubusercontent.com/48249549/83015039-c58bdd80-a05a-11ea-9604-dcc080c1c159.png)
+    - Post/ `./contents/` 
+    - Upload a content or a nubmer of contents 
+    - with multipart/form-data
 
-    - Put/ './contents/'    Dont need 
+        ![image](https://user-images.githubusercontent.com/48249549/83015039-c58bdd80-a05a-11ea-9604-dcc080c1c159.png)
 
-    - Delete/ './contents/'     Dont need 
+    - Put/ `./contents/`    Dont need 
+    - Dont develope
+
+    - Delete/ `./contents/contentId` 
+    - Delete a content 
 
 
 ### Kotlin과 Java를 이용한 Login App Test 
