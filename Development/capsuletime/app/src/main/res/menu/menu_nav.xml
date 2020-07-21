@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/mypage"
+        android:title="=MyPage"
+        android:icon="@drawable/mypage_icon" />
+
+    <item
+        android:id="@+id/capsulesearch"
+        android:title="=CapsuleSearch"
+        android:icon="@drawable/capsulemap_icon" />
+
+    <item
+        android:id="@+id/capsulemap"
+        android:title="=CapsuleMap"
+        android:icon="@drawable/capsulemap_icon" />
+    <item
+        android:id="@+id/capsulear"
+        android:title="=CapsuleAr"
+        android:icon="@drawable/ar_icon" />
+</menu>
