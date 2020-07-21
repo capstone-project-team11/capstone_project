@@ -34,6 +34,7 @@ import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.Setting;
 import com.example.capsuletime.User;
 import com.example.capsuletime.cap;
+import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
 import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
 import com.example.capsuletime.mainpages.capsulemap.capsulemap;
 import com.example.capsuletime.mainpages.followpage.Follow;
@@ -46,6 +47,7 @@ import com.google.android.material.bottomnavigation.LabelVisibilityMode;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import retrofit2.Call;
@@ -54,7 +56,6 @@ import retrofit2.Response;
 
 public class searchpage extends AppCompatActivity {
     private User user;
-    private String user_id;
     private String nick_name;
     private String hashtag;
     private RetrofitInterface retrofitInterface;
@@ -80,10 +81,20 @@ public class searchpage extends AppCompatActivity {
         SearchView searchView = findViewById(R.id.editSearch);
 
         Intent intent = getIntent();
-        user = intent.getParcelableExtra("user");
-        user_id = intent.getStringExtra("user_id");
-        nick_name = intent.getStringExtra("nick_name");
-        hashtag = intent.getStringExtra("hashtag");
+        //hashtag = intent.getStringExtra("hashtag");
+
+        NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
+        HashSet<String> nickNameSharedPrefer = (HashSet<String>) nickNameSharedPreferences.getHashSet(
+                NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY,
+                new HashSet<String>()
+        );
+        int count = 0;
+        for (String nick : nickNameSharedPrefer) {
+            if (count == 0){
+                nick_name = nick;
+            }
+            count ++;
+        }
 
         if(hashtag != null){
             searchView.setQuery(hashtag,true);
@@ -130,50 +141,43 @@ public class searchpage extends AppCompatActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                if (user != null) {
 
-                    switch (menuItem.getItemId()) {
-                        case R.id.mypage: {
-                            Intent intent = new Intent(getApplicationContext(), mypage.class);
-                            intent.putExtra("user_id", user_id);
-                            intent.putExtra("nick_name", nick_name);
+                switch (menuItem.getItemId()) {
+                    case R.id.mypage: {
+                        Intent intent = new Intent(getApplicationContext(), mypage.class);
+                        startActivity(intent);
+                        overridePendingTransition(0,0);
+                        return true;
+                    }
+                    case R.id.capsulesearch:
+                        return true;
+
+                    case R.id.capsulemap:{
+                        if (Build.VERSION.SDK_INT >= 23 &&
+                                ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(searchpage.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                                    0);
+                            break;
+                        } else if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+
+                            Intent intent = new Intent(getApplicationContext(), capsulemap.class);
                             startActivity(intent);
-                            overridePendingTransition(0,0);
-                            return true;
-                        }
-                        case R.id.capsulesearch:
+                            overridePendingTransition(0, 0);
+
                             return true;
 
-                        case R.id.capsulemap:{
-                            if (Build.VERSION.SDK_INT >= 23 &&
-                                    ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(searchpage.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                                        0);
-                                break;
-                            } else if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-
-                                Intent intent = new Intent(getApplicationContext(), capsulemap.class);
-                                intent.putExtra("userId", user);
-                                intent.putExtra("nick_name", nick_name);
-                                Log.d(TAG, user.toString());
-                                startActivity(intent);
-                                overridePendingTransition(0, 0);
-
-                                return true;
-
-                            }
-                        }
-
-                        case R.id.capsulear: {
-
-                            Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
-                            intent.putExtra("userId", user);
-                            startActivity(intent);
-                            overridePendingTransition(0,0);
-                            //return true;
                         }
                     }
+
+                    case R.id.capsulear: {
+
+                        Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(0,0);
+                        //return true;
+                    }
                 }
+
                 bottomNavigationView.setSelectedItemId(R.id.capsulesearch);
                 return false;
             }
@@ -188,7 +192,7 @@ public class searchpage extends AppCompatActivity {
         result(query);
 
         arrayList.clear();
-        RetrofitClient retrofitClient = new RetrofitClient();
+        RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         retrofitInterface.requestAllUser().enqueue(new Callback<List<User>>() {
@@ -233,7 +237,7 @@ public class searchpage extends AppCompatActivity {
 
         Log.d(TAG, "Result query = " + query);
 
-        RetrofitClient retrofitClient = new RetrofitClient();
+        RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         Call<List<cap>> call = retrofitInterface.requestAllCapsules();
@@ -296,7 +300,7 @@ public class searchpage extends AppCompatActivity {
 
         Log.d(TAG, "Result query = " + query);
 
-        RetrofitClient retrofitClient = new RetrofitClient();
+        RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         Call<List<cap>> call = retrofitInterface.requestAllCapsules();

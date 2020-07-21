@@ -32,6 +32,9 @@ import com.example.capsuletime.R;
 import com.example.capsuletime.RetrofitClient;
 import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.User;
+import com.example.capsuletime.core.preferences.CookieSharedPreferences;
+import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
+import com.example.capsuletime.login.login;
 import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
 import com.example.capsuletime.mainpages.capsulemap.PopUpActivity;
 import com.example.capsuletime.mainpages.capsulemap.capsulemap;
@@ -48,6 +51,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -83,20 +87,26 @@ public class mypage extends AppCompatActivity {
         setContentView(R.layout.activity_mypage);
         Log.d(TAG,"FFFF is mypage");
         Intent intent = getIntent();
-        user_id = intent.getStringExtra("user_id");
-        nick_name = intent.getStringExtra("nick_name");
-        user = intent.getParcelableExtra("user");
         fromArFlag = intent.getIntExtra("fromAr",0);
         Log.d("Hello","mypage");
 
+        NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
+        HashSet<String> nickNameSharedPrefer = (HashSet<String>) nickNameSharedPreferences.getHashSet(
+                NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY,
+                new HashSet<String>()
+        );
+        int count = 0;
+        for (String nick : nickNameSharedPrefer) {
+            if (count == 0){
+                nick_name = nick;
+            }
+            count ++;
+        }
 
         ImageView iv_user = (ImageView) this.findViewById(R.id.user_image);
-        TextView tv_id = (TextView) this.findViewById(R.id.tv_userId);
+        TextView tv_nick = (TextView) this.findViewById(R.id.tv_nick);
 
-        if(user_id != null)
-            tv_id.setText(user_id);
-
-        RetrofitClient retrofitClient = new RetrofitClient();
+        RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
@@ -112,12 +122,22 @@ public class mypage extends AppCompatActivity {
 
         iv_user.setImageResource(R.drawable.user);
 
-        if(user == null){
-            retrofitInterface.requestUserData(user_id).enqueue(new Callback<User>() {
+
+        if(nick_name != null){
+            tv_nick.setText(nick_name);
+            retrofitInterface.requestSearchUser(nick_name).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
-                    user = response.body();
 
+                    // 세션 만료시 로그인 창으로 이동
+                    if (response.code() == 401) {
+                        Intent intent = new Intent(getApplicationContext(), login.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+
+                    user = response.body();
 
                     if (user != null) {
                         if(user.getImage_url() == null || Objects.equals(user.getImage_url(), "")){
@@ -131,10 +151,9 @@ public class mypage extends AppCompatActivity {
                                 .into(iv_user);
                         }
 
-                        tv_id.setText(user.getNick_name());
                     } else {
                         iv_user.setImageResource(R.drawable.user);
-                        tv_id.setText("서버통신오류");
+                        tv_nick.setText("서버통신오류");
                     }
                 }
 
@@ -143,19 +162,8 @@ public class mypage extends AppCompatActivity {
                     Log.d(TAG, "server-get-user fail");
                 }
             });
-        } else {
-            if(user.getImage_url() == null || Objects.equals(user.getImage_url(), "")){
-                Log.d(TAG,"user not null url null");
-                iv_user.setImageResource(R.drawable.user);
-            } else {
-                Log.d(TAG,"user not null url not null");
-                Glide
-                    .with(getApplicationContext())
-                    .load(user.getImage_url())
-                    .into(iv_user);
-            }
-            tv_id.setText(user.getUser_id());
         }
+
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
 
@@ -168,51 +176,44 @@ public class mypage extends AppCompatActivity {
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                if (user != null) {
 
-                    switch (menuItem.getItemId()) {
-                        case R.id.mypage:
-                            return true;
+                switch (menuItem.getItemId()) {
+                    case R.id.mypage:
+                        return true;
 
-                        case R.id.capsulesearch:{
-                            Intent intent = new Intent(getApplicationContext(), searchpage.class);
-                            intent.putExtra("userId", user);
+                    case R.id.capsulesearch:{
+                        Intent intent = new Intent(getApplicationContext(), searchpage.class);
+                        startActivity(intent);
+                        overridePendingTransition(0, 0);
+                        return true;
+                    }
+
+                    case R.id.capsulemap: {
+                        if (Build.VERSION.SDK_INT >= 23 &&
+                                ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(mypage.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                                    0);
+                            break;
+                        } else if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+
+                            Intent intent = new Intent(getApplicationContext(), capsulemap.class);
                             Log.d(TAG, user.toString());
                             startActivity(intent);
                             overridePendingTransition(0, 0);
+
                             return true;
-                        }
 
-                        case R.id.capsulemap: {
-                            if (Build.VERSION.SDK_INT >= 23 &&
-                                    ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(mypage.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                                        0);
-                                break;
-                            } else if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-
-                                Intent intent = new Intent(getApplicationContext(), capsulemap.class);
-                                intent.putExtra("userId", user);
-                                intent.putExtra("user_id", user_id);
-                                intent.putExtra("nick_name", nick_name);
-                                Log.d(TAG, user.toString());
-                                startActivity(intent);
-                                overridePendingTransition(0, 0);
-
-                                return true;
-
-                            }
-                        }
-                        case R.id.capsulear: {
-                            //bottomNavigationView.getMenu().getItem(0).setChecked(true);
-                            Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
-                            intent.putExtra("userId", user);
-                            startActivity(intent);
-                            overridePendingTransition(0, 0);
-                            //return true;
                         }
                     }
+                    case R.id.capsulear: {
+                        //bottomNavigationView.getMenu().getItem(0).setChecked(true);
+                        Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
+                        startActivity(intent);
+                        overridePendingTransition(0, 0);
+                        //return true;
+                    }
                 }
+
                 bottomNavigationView.setSelectedItemId(R.id.mypage);
                 return false;
             }
@@ -228,6 +229,13 @@ public class mypage extends AppCompatActivity {
                 @RequiresApi(api = Build.VERSION_CODES.N)
                 @Override
                 public void onResponse(Call<List<Capsule>> call, Response<List<Capsule>> response) {
+                    if (response.code() == 401) {
+
+                        Intent intent = new Intent(getApplicationContext(), login.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
                     capsuleList = response.body();
                     if (capsuleList != null) {
                         for (Capsule capsule : capsuleList) {
@@ -315,7 +323,6 @@ public class mypage extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), mypage_map.class);
                 intent.putExtra("nick_name", user.getNick_name());
-                intent.putExtra("user_id", user.getUser_id());
                 Log.d(TAG, user.toString());
                 startActivity(intent);
                 overridePendingTransition(0, 0);

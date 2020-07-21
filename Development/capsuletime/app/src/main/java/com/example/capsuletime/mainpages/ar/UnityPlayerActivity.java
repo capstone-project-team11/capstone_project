@@ -1,5 +1,6 @@
 package com.example.capsuletime.mainpages.ar;
 
+import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
 import com.example.capsuletime.mainpages.mypage.mypage;
 import com.unity3d.player.*;
 import android.app.Activity;
@@ -15,10 +16,12 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 
+import java.util.HashSet;
+
 public class UnityPlayerActivity extends Activity
 {
     protected UnityPlayer mUnityPlayer; // don't change the name of this variable; referenced from native code
-    private String userId;
+    private String nick_name;
     // Override this in your custom UnityPlayerActivity to tweak the command line arguments passed to the Unity Android Player
     // The command line arguments are passed as a string, separated by spaces
     // UnityPlayerActivity calls this from 'onCreate'
@@ -40,7 +43,19 @@ public class UnityPlayerActivity extends Activity
         String cmdLine = updateUnityCommandLineArguments(getIntent().getStringExtra("unity"));
         Intent intent = getIntent();
         getIntent().putExtra("unity", cmdLine);
-        userId = intent.getStringExtra("userId");
+
+        NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
+        HashSet<String> nickNameSharedPrefer = (HashSet<String>) nickNameSharedPreferences.getHashSet(
+                NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY,
+                new HashSet<String>()
+        );
+        int count = 0;
+        for (String nick : nickNameSharedPrefer) {
+            if (count == 0){
+                nick_name = nick;
+            }
+            count ++;
+        }
 
         mUnityPlayer = new UnityPlayer(this);
         setContentView(mUnityPlayer);

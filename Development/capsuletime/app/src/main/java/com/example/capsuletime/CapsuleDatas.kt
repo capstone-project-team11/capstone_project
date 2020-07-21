@@ -7,7 +7,11 @@ import kotlinx.android.parcel.Parcelize
 import okhttp3.MultipartBody
 
 data class Success (
-        val nick_name: String
+        val success: String
+)
+
+data class Logined(
+        val nick_name: String?
 )
 
 data class Content (

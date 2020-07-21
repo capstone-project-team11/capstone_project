@@ -33,11 +33,12 @@ import com.example.capsuletime.R;
 import com.example.capsuletime.RetrofitClient;
 import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.User;
+import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
+import com.example.capsuletime.login.login;
 import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
 import com.example.capsuletime.mainpages.capsulemap.PopUpActivity;
 import com.example.capsuletime.mainpages.followpage.followerpage;
 import com.example.capsuletime.mainpages.followpage.followpage;
-import com.example.capsuletime.mainpages.userpage.userpage;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -52,6 +53,7 @@ import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -84,16 +86,8 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
         super.onCreate(saveInstanceState);
         setContentView(R.layout.activity_mypage_map);
 
-        Intent intent = getIntent();
-        user = intent.getParcelableExtra("user");
-        user_id = intent.getStringExtra("user_id");
-        nick_name = intent.getStringExtra("nick_name");
-
         ImageView iv_user = (ImageView) this.findViewById(R.id.user_image);
-        TextView tv_id = (TextView) this.findViewById(R.id.tv_userId);
-
-        if(user_id != null)
-            tv_id.setText(user_id);
+        TextView tv_nick = (TextView) this.findViewById(R.id.tv_nick);
 
         TedPermission.with(getApplicationContext())
                 .setPermissionListener(permissionListener)
@@ -102,19 +96,39 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
                 .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
                 .check();
 
+        NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
+        HashSet<String> nickNameSharedPrefer = (HashSet<String>) nickNameSharedPreferences.getHashSet(
+                NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY,
+                new HashSet<String>()
+        );
+        int count = 0;
+        for (String nick : nickNameSharedPrefer) {
+            if (count == 0){
+                nick_name = nick;
+            }
+            count ++;
+        }
+
         initCapsuleMarkerImageIdList();
-
         iv_user.setImageResource(R.drawable.user);
-
-        RetrofitClient retrofitClient = new RetrofitClient();
+        RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        if(user == null) {
+        if(nick_name != null) {
+            tv_nick.setText(nick_name);
             retrofitInterface.requestSearchUser(nick_name).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
+
+                    if (response.code() == 401) {
+                        Intent intent = new Intent(getApplicationContext(), login.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+
                     user = response.body();
                     if (user != null) {
                         if (user.getImage_url() == null || Objects.equals(user.getImage_url(), "")) {
@@ -128,10 +142,9 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
                                     .into(iv_user);
                         }
 
-                        tv_id.setText(user.getUser_id());
                     } else {
                         iv_user.setImageResource(R.drawable.user);
-                        tv_id.setText("서버통신오류");
+                        tv_nick.setText("서버통신오류");
                     }
                 }
 
@@ -143,19 +156,7 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
             });
 
 
-        }else {
-                if(user.getImage_url() == null || Objects.equals(user.getImage_url(), "")){
-                    Log.d(TAG,"user not null url null");
-                    iv_user.setImageResource(R.drawable.user);
-                } else {
-                    Log.d(TAG,"user not null url not null");
-                    Glide
-                            .with(getApplicationContext())
-                            .load(user.getImage_url())
-                            .into(iv_user);
-                }
-                tv_id.setText(user.getUser_id());
-            }
+        }
 
         Button imageButton = (Button) findViewById(R.id.button);
         imageButton.setOnClickListener(new View.OnClickListener() {
@@ -178,9 +179,6 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), followpage.class);
                 intent.putExtra("nick_name", user.getNick_name());
-                intent.putExtra("user_id", user_id);
-                intent.putExtra("user", user);
-                Log.d(TAG, user.toString());
                 startActivity(intent);
                 overridePendingTransition(0, 0);
             }
@@ -193,9 +191,6 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), followerpage.class);
                 intent.putExtra("nick_name", user.getNick_name());
-                intent.putExtra("user_id", user_id);
-                intent.putExtra("user", user);
-                Log.d(TAG, user.toString());
                 startActivity(intent);
                 overridePendingTransition(0, 0);
             }
@@ -208,7 +203,6 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), settingpage.class);
                 intent.putExtra("nick_name", user.getNick_name());
-                intent.putExtra("user_id", user.getUser_id());
                 intent.putExtra("image_url", user.getImage_url());
                 Log.d(TAG, user.toString());
                 startActivity(intent);
@@ -232,7 +226,6 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
                 switch (menuItem.getItemId()) {
                     case R.id.mypage: {
                         Intent intent = new Intent(getApplicationContext(), mypage.class);
-                        intent.putExtra("user", user);
                         startActivity(intent);
                         overridePendingTransition(0,0);
                         return true;
@@ -243,7 +236,6 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
                     case R.id.capsulear: {
 
                         Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
-                        intent.putExtra("userId", user);
                         startActivity(intent);
                         overridePendingTransition(0,0);
                         //return true;
@@ -356,7 +348,7 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
 
         mMap = googleMap;
 
-        RetrofitClient retrofitClient = new RetrofitClient();
+        RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
@@ -370,13 +362,14 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
             @Override
             public void onResponse(Call<List<Capsule>> call, Response<List<Capsule>> response) {
 
-                capsuleList = response.body();
-                Log.d(TAG, response.body().toString() + "curMarkerAdd");
-
-                for (int i = 0; i < capsuleList.size(); i++) {
-                    Log.d(TAG, capsuleList.get(i).toString());
+                if (response.code() == 401) {
+                    Intent intent = new Intent(getApplicationContext(), login.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
                 }
 
+                capsuleList = response.body();
                 setUpCapsulesOnMap();
             }
 

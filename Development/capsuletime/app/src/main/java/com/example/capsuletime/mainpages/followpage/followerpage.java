@@ -22,7 +22,6 @@ import retrofit2.Response;
 
 public class followerpage extends AppCompatActivity {
     private User user;
-    private String user_id;
     private String nick_name;
     private RetrofitInterface retrofitInterface;
     private ArrayList<Follow> arrayList;
@@ -39,7 +38,6 @@ public class followerpage extends AppCompatActivity {
 
         Intent intent = getIntent();
         user = intent.getParcelableExtra("user");
-        user_id = intent.getStringExtra("user_id");
         nick_name = intent.getStringExtra("nick_name");
 
         recyclerView = (RecyclerView)findViewById(R.id.rv);
@@ -51,11 +49,10 @@ public class followerpage extends AppCompatActivity {
         recyclerView.setAdapter(followLogAdapter);
 
 
-        RetrofitClient retrofitClient = new RetrofitClient();
+        RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         String inStr = (nick_name != null) ? nick_name : user.getNick_name();
-        if (inStr != null);
         retrofitInterface.requestFollower(inStr).enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {

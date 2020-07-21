@@ -22,12 +22,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.example.capsuletime.Logined;
 import com.example.capsuletime.R;
 import com.example.capsuletime.RetrofitClient;
 import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.Success;
 import com.example.capsuletime.User;
+import com.example.capsuletime.core.preferences.CookieSharedPreferences;
+import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
 import com.example.capsuletime.mainpages.mypage.mypage;
+
+import java.util.HashSet;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -53,7 +58,7 @@ public class login extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        RetrofitClient retrofit_Client = new RetrofitClient();
+        RetrofitClient retrofit_Client = new RetrofitClient(getApplicationContext());
 
         retrofitInterface = retrofit_Client.retrofitInterface;
 
@@ -70,25 +75,26 @@ public class login extends AppCompatActivity {
                 final String pw = pwText.getText().toString();
                 Log.d("TAG",id+ " "+pw);
                 temp = id;
-                retrofitInterface.requestLogin(id, pw).enqueue(new Callback<Success>() {
+                retrofitInterface.requestLogin(id, pw).enqueue(new Callback<Logined>() {
                     @Override
-                    public void onResponse(Call<Success> call, Response<Success> response) {
-                        Success auth = response.body();
+                    public void onResponse(Call<Logined> call, Response<Logined> response) {
+                        Logined auth = response.body();
                         nick_name = auth.getNick_name();
-                        //Log.d(TAG, auth.toString());
                         Log.d(TAG, auth.getNick_name().toString());
-                        // Header Code 확인 Log.d("TAG",Integer.toString(response.code()));
+                        // Header Code 확인
+                        //Log.d("TAG",Integer.toString(response.code()));
 
+                        if (auth.getNick_name() != null) {
 
-                        if (auth.getNick_name().equals(nick_name)) {
+                            NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
+                            HashSet<String> nickName = new HashSet<String>();
+                            nickName.add(auth.getNick_name());
+                            nickNameSharedPreferences.putHashSet(NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY, nickName);
 
                             Toast.makeText(v.getContext(),"정상적으로 로그인 되었습니다.",Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(getApplicationContext(), mypage.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra("nick_name",nick_name);
-                            intent.putExtra("user_id",id);
-                            intent.putExtra("User",user);
                             startActivity(intent);
                         } else {
                             Toast.makeText(v.getContext(),"Id와 Password를 확인해주세요.",Toast.LENGTH_SHORT).show();
@@ -97,7 +103,7 @@ public class login extends AppCompatActivity {
                     }
 
                     @Override
-                    public void onFailure(Call<Success> call, Throwable t) {
+                    public void onFailure(Call<Logined> call, Throwable t) {
                         Toast.makeText(v.getContext(),"서버와 통신이 불가능합니다.",Toast.LENGTH_SHORT).show();
                     }
                 });

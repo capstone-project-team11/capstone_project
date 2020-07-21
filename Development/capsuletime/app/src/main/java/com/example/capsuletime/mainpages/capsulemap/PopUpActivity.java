@@ -70,7 +70,7 @@ public class PopUpActivity extends AppCompatActivity {
 
     public void search() {
 
-        RetrofitClient retrofitClient = new RetrofitClient();
+        RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         retrofitInterface.requestSearchUser(nick_name).enqueue(new Callback<User>() {

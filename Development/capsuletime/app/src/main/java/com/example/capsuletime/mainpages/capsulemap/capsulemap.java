@@ -29,6 +29,7 @@ import com.example.capsuletime.RetrofitClient;
 import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.User;
 import com.example.capsuletime.cap;
+import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
 import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
 import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
 import com.example.capsuletime.mainpages.mypage.mypage;
@@ -48,6 +49,7 @@ import com.gun0912.tedpermission.TedPermission;
 import com.unity3d.player.UnityPlayer;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
@@ -58,7 +60,6 @@ import retrofit2.Response;
 public class capsulemap extends AppCompatActivity implements OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
 
     private static final String TAG = "capsulemap";
-    private String user_id;
     private String nick_name;
     private User user;
     private RetrofitInterface retrofitInterface;
@@ -80,9 +81,19 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
         setContentView(R.layout.activity_capsulemap);
 
         Intent intent = getIntent();
-        user = intent.getParcelableExtra("user");
-        user_id = intent.getParcelableExtra("user_id");
-        nick_name = intent.getParcelableExtra("nick_name");
+
+        NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
+        HashSet<String> nickNameSharedPrefer = (HashSet<String>) nickNameSharedPreferences.getHashSet(
+                NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY,
+                new HashSet<String>()
+        );
+        int count = 0;
+        for (String nick : nickNameSharedPrefer) {
+            if (count == 0){
+                nick_name = nick;
+            }
+            count ++;
+        }
 
         TedPermission.with(getApplicationContext())
                 .setPermissionListener(permissionListener)
@@ -93,19 +104,18 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
 
         initCapsuleMarkerImageIdList();
 
-        RetrofitClient retrofitClient = new RetrofitClient();
+        RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
-        if(user == null){
-            retrofitInterface.requestUserData(user_id).enqueue(new Callback<User>() {
+        if(nick_name != null){
+            retrofitInterface.requestSearchUser(nick_name).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
                     user = response.body();
                     Log.d(TAG, user.toString());
                 }
-
 
                 @Override
                 public void onFailure(Call<User> call, Throwable t) {
@@ -130,8 +140,6 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
                 switch (menuItem.getItemId()) {
                     case R.id.mypage: {
                         Intent intent = new Intent(getApplicationContext(), mypage.class);
-                        intent.putExtra("user_id", user_id);
-                        intent.putExtra("nick_name", nick_name);
                         startActivity(intent);
                         overridePendingTransition(0,0);
                         return true;
@@ -151,7 +159,6 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
                     case R.id.capsulear: {
 
                         Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
-                        intent.putExtra("userId", user);
                         startActivity(intent);
                         overridePendingTransition(0,0);
                         //return true;
@@ -264,7 +271,7 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
 
         mMap = googleMap;
 
-        RetrofitClient retrofitClient = new RetrofitClient();
+        RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         final Geocoder geocoder = new Geocoder(this, Locale.getDefault());

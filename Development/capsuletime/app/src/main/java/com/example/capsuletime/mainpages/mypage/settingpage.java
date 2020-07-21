@@ -42,6 +42,7 @@ import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.Setting;
 import com.example.capsuletime.Success;
 import com.example.capsuletime.User;
+import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
 import com.example.capsuletime.login.CustomDialog;
 import com.example.capsuletime.login.SignUp1;
 import com.example.capsuletime.login.SignUp2;
@@ -58,6 +59,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -69,7 +71,6 @@ import retrofit2.Response;
 
 public class settingpage extends AppCompatActivity {
     private User user;
-    private String user_id;
     private String nick_name;
     private String image_url;
     private RetrofitInterface retrofitInterface;
@@ -103,14 +104,13 @@ public class settingpage extends AppCompatActivity {
 
         Intent intent = getIntent();
         user = intent.getParcelableExtra("user");
-        user_id = intent.getStringExtra("user_id");
         nick_name = intent.getStringExtra("nick_name");
         image_url = intent.getStringExtra("image_url");
 
-        CardView cv_upload_picture =  (CardView) this.findViewById(R.id.btn_UploadPicture);
+        CardView cv_upload_picture = (CardView) this.findViewById(R.id.btn_UploadPicture);
         Button btn_finish = (Button) this.findViewById(R.id.button7);
 
-        RetrofitClient retrofitClient = new RetrofitClient();
+        RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         final ImageView imageView2 = findViewById(R.id.user_image);
@@ -118,7 +118,6 @@ public class settingpage extends AppCompatActivity {
                 .with(this)
                 .load(image_url)
                 .into(imageView2);
-
 
 
         btn_finish.setOnClickListener(new View.OnClickListener() {
@@ -129,17 +128,17 @@ public class settingpage extends AppCompatActivity {
 
                 String absoulutePath = getPath(v.getContext(), cropUri);
                 File file = new File(absoulutePath);
-                String type =getMimeType(file);
+                String type = getMimeType(file);
                 RequestBody requestImage = RequestBody.create(MediaType.parse(type), file);
                 MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), requestImage);
-                Log.d(TAG,"파일 이름 = " + file.getName().toString()+" " + requestImage.toString());
+                Log.d(TAG, "파일 이름 = " + file.getName().toString() + " " + requestImage.toString());
 
                 /*RequestBody user_id2 = RequestBody.create(MediaType.parse("text/plain"), nick_name);
                 RequestBody password2 = RequestBody.create(MediaType.parse("text/plain"), et_pw.getText().toString());
                 RequestBody nick_name2 = RequestBody.create(MediaType.parse("text/plain"), et_nick.getText().toString());*/
 
 
-                Setting setting = new Setting(nick_name,password,new_nick_name,multipartBody);
+                Setting setting = new Setting(nick_name, password, new_nick_name, multipartBody);
 
                 Log.d(TAG, "수정 = " + setting.toString());
 
@@ -150,7 +149,22 @@ public class settingpage extends AppCompatActivity {
                 call.enqueue(new Callback<List<Setting>>() {
                     @Override
                     public void onResponse(Call<List<Setting>> call, Response<List<Setting>> response) {
+                        if (response.code() == 401) {
+                            Intent intent = new Intent(getApplicationContext(), login.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
 
+                        // 기존 닉네임 삭제 및 새 닉네임 등록
+                        NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
+                        nickNameSharedPreferences.deleteHashSet(NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY);
+
+                        HashSet<String> nickName = new HashSet<String>();
+                        nickName.add(new_nick_name);
+                        nickNameSharedPreferences.putHashSet(NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY, nickName);
+
+                        //
                     }
 
                     @Override
@@ -159,7 +173,7 @@ public class settingpage extends AppCompatActivity {
                     }
                 });
 
-                }
+            }
 
         });
 
@@ -172,16 +186,14 @@ public class settingpage extends AppCompatActivity {
                         .setPermissionListener(permissionListener)
                         .setRationaleMessage("카메라 권한이 필요합니다.")
                         .setDeniedMessage("거부하셨습니다.")
-                        .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA,Manifest.permission.READ_EXTERNAL_STORAGE)
+                        .setPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA, Manifest.permission.READ_EXTERNAL_STORAGE)
                         .check();
 
                 CustomSettingDialog custom_dlg = new CustomSettingDialog(settingpage.this);
                 custom_dlg.callFunction();
             }
         });
-
-
-            }
+    }
 
     PermissionListener permissionListener = new PermissionListener() {
         @Override

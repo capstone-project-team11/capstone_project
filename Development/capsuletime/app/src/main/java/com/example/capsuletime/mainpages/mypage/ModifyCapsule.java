@@ -36,6 +36,7 @@ import com.example.capsuletime.R;
 import com.example.capsuletime.RetrofitClient;
 import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.Success;
+import com.example.capsuletime.login.login;
 import com.google.android.material.tabs.TabLayout;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
@@ -81,7 +82,7 @@ public class ModifyCapsule extends AppCompatActivity {
         setContentView(R.layout.activity_modify_capsule);
 
 
-        RetrofitClient retrofitClient = new RetrofitClient();
+        RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         list = new ArrayList<>();
@@ -185,6 +186,14 @@ public class ModifyCapsule extends AppCompatActivity {
                     retrofitInterface.requestPutCapsuleWithImages(id_body, title_body, text_body, parts).enqueue(new Callback<Success>() {
                         @Override
                         public void onResponse(Call<Success> call, Response<Success> response) {
+
+                            if (response.code() == 401) {
+                                Intent intent = new Intent(getApplicationContext(), login.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
+
                             Log.d(TAG,"success with images");
 
                             fileDelete(cropUri);
@@ -217,6 +226,14 @@ public class ModifyCapsule extends AppCompatActivity {
                     retrofitInterface.requestPutCapsule(capsule_id, title, text).enqueue(new Callback<Success>() {
                         @Override
                         public void onResponse(Call<Success> call, Response<Success> response) {
+
+                            if (response.code() == 401) {
+                                Intent intent = new Intent(getApplicationContext(), login.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
+
                             Toast.makeText(ModifyCapsule.this,"캡슐 수정이 완료되었습니다.",Toast.LENGTH_SHORT).show();
                             Intent intent = new Intent(ModifyCapsule.this, mypage.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

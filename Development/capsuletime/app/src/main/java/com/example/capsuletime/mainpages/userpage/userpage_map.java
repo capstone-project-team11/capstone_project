@@ -33,8 +33,7 @@ import com.example.capsuletime.R;
 import com.example.capsuletime.RetrofitClient;
 import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.User;
-import com.example.capsuletime.cap;
-import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
+import com.example.capsuletime.login.login;
 import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
 import com.example.capsuletime.mainpages.capsulemap.PopUpActivity;
 import com.example.capsuletime.mainpages.mypage.mypage;
@@ -50,7 +49,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
-import com.unity3d.player.UnityPlayer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,7 +89,7 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
         nick_name = intent.getStringExtra("nick_name");
 
         ImageView iv_user = (ImageView) this.findViewById(R.id.user_image);
-        TextView tv_id = (TextView) this.findViewById(R.id.tv_userId);
+        TextView tv_id = (TextView) this.findViewById(R.id.tv_nick);
 
         if(user_id != null)
             tv_id.setText(user_id);
@@ -107,7 +105,7 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
 
         iv_user.setImageResource(R.drawable.user);
 
-        RetrofitClient retrofitClient = new RetrofitClient();
+        RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -116,6 +114,14 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
             retrofitInterface.requestSearchUser(nick_name).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
+
+                    if (response.code() == 401) {
+                        Intent intent = new Intent(getApplicationContext(), login.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+
                     user = response.body();
                     if (user != null) {
                         if (user.getImage_url() == null || Objects.equals(user.getImage_url(), "")) {
@@ -156,7 +162,7 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
                             .into(iv_user);
                 }
                 tv_id.setText(user.getUser_id());
-            }
+        }
 
         Button imageButton = (Button) findViewById(R.id.button);
         imageButton.setOnClickListener(new View.OnClickListener() {
@@ -312,7 +318,7 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap = googleMap;
 
-        RetrofitClient retrofitClient = new RetrofitClient();
+        RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
@@ -325,6 +331,13 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
         retrofitInterface.requestSearchUserNick(inStr).enqueue(new Callback<List<Capsule>>() {
             @Override
             public void onResponse(Call<List<Capsule>> call, Response<List<Capsule>> response) {
+
+                if (response.code() == 401) {
+                    Intent intent = new Intent(getApplicationContext(), login.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
 
                 capsuleList = response.body();
                 Log.d(TAG, response.body().toString() + "curMarkerAdd");

@@ -13,7 +13,7 @@
         android:layout_height="200dp">
 
         <TextView
-            android:id="@+id/tv_userId"
+            android:id="@+id/tv_nick"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="196dp"
@@ -49,7 +49,7 @@
             app:cardPreventCornerOverlap="true"
             app:cardUseCompatPadding="false"
             app:contentPadding="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/tv_userId"
+            app:layout_constraintBottom_toTopOf="@+id/tv_nick"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +58,7 @@
 
             <ImageView
                 android:id="@+id/user_image"
-                android:layout_width="fill_parent"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="fitXY"
                 app:srcCompat="@drawable/user_no_image"

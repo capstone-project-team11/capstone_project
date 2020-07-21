@@ -13,7 +13,7 @@ interface RetrofitInterface {
             // input definition
             @Field("user_id") user_id:String,
             @Field("password") password:String
-    ) : Call<Success>
+    ) : Call<Logined>
 
     @FormUrlEncoded// form url encode
     @POST("/users/") // url

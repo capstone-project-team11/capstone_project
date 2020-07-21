@@ -93,7 +93,7 @@ public class SignUp2 extends AppCompatActivity {
         CardView cv_close_picture = (CardView) this.findViewById(R.id.btn_close);
         Button btn_finish = (Button) this.findViewById(R.id.btn_signupfinish);
 
-        RetrofitClient retrofitClient = new RetrofitClient();
+        RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         /*
@@ -172,7 +172,7 @@ public class SignUp2 extends AppCompatActivity {
                                 @Override
                                 public void onResponse(Call<Success> call, Response<Success> response) {
                                     Success success = response.body();
-                                    if (success.getNick_name().equals("true")){
+                                    if (success.getSuccess().equals("true")){
                                         Toast toast = Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT);
                                         toast.show();
                                         Intent intent = new Intent(SignUp2.this, login.class);
@@ -198,7 +198,7 @@ public class SignUp2 extends AppCompatActivity {
                                 @Override
                                 public void onResponse(Call<Success> call, Response<Success> response) {
                                     Success success = response.body();
-                                    if (success.getNick_name().equals("true")){
+                                    if (success.getSuccess().equals("true")){
                                         Toast toast = Toast.makeText(getApplicationContext(), "회원가입이 완료되었습니다.", Toast.LENGTH_SHORT);
                                         toast.show();
                                         Intent intent = new Intent(SignUp2.this, login.class);
