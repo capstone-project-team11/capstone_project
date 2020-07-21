@@ -27,17 +27,19 @@
 9. 팔로우 팔로워 설정 등의 버튼 눌러서 이동시 문제
     - 페이지 이동시 하단 네비바 이름 출력 제거 필요와 하단바 기능 작동 안함
     - 팔로우나 팔로워 리스트를 통해서 유저페이지로 들어갔을 때 지도에서 캡슐 클릭시 출력되는 이벤트 수정 필요 ( 논의하여 변경 )
-10. 세션추가하면서 안드로이드 작업시 유의사항 ( 원진형 유의사항 )
-    - 서버와 통신할때 Response가 왔을 때 Response의 Header Code가 401인지 비교하여 True이면 로그인 페이지로 이동하는 조건문을 항상 맨위에 넣어줘야함 (또한, intent stack all clear 필요 )
-    - 닉네임 변경시 SharedPreference (어플 내 저장 공간)에 저장되어있는 해쉬값 nick_name을 갱신해줘야함
-    - 로그아웃 기능을 만들떄 SharedPreference에 저장된 해쉬값 nick_name을 제거해주고 로그인 페이지로 이동해줘야함 . (또한, intent stack all clear 필요 )
-11. 해쉬태그, 유저 검색시 문제
+10. 해쉬태그, 유저 검색시 문제
     - 간혹 동일한 닉네임이 두개 출력됨 ( 사진 첨부 1)
     - 자신의 닉네임이 검색됨 ( 사진 첨부 2)
     - 검색 내용 입력 후 내용을 지우면 검색에 매칭과 다른 유저가 검색됨 ( 사진 첨부 3)
 	- 해쉬태그로 캡슐 검색후 어떻게 활용할 것인지 수정 필요 ( 논의하여 변경 )
 
 ##### 사진 첨부 1, 2
-![Screenshot_1595310048](https://user-images.githubusercontent.com/48249549/88025501-5240ac80-cb6f-11ea-91b0-4d06e5f8ab65.png)
+    -   ![Screenshot_1595310048](https://user-images.githubusercontent.com/48249549/88025501-5240ac80-cb6f-11ea-91b0-4d06e5f8ab65.png)
 ##### 사진 첨부 3
-![Screenshot_1595313791](https://user-images.githubusercontent.com/48249549/88025511-566cca00-cb6f-11ea-9396-561e52d27808.png)
+    -   ![Screenshot_1595313791](https://user-images.githubusercontent.com/48249549/88025511-566cca00-cb6f-11ea-9396-561e52d27808.png)
+
+#### 유의 사항
+1. 세션 추가로 인해 Retrofit으로 서버와 통신시 Retrofit_Client 객체에 Context를 파라미터로 넘겨줘야함
+2. 서버와 통신할때 Response가 왔을 때 Response의 Header Code가 401인지 비교하여 True이면 로그인 페이지로 이동하는 조건문을 항상 맨위에 넣어줘야함 (또한, intent stack all clear 필요 )
+3. 닉네임 변경시 SharedPreference (어플 내 저장 공간)에 저장되어있는 해쉬값 nick_name을 갱신해줘야함
+4. 로그아웃 기능을 만들떄 SharedPreference에 저장된 해쉬값 nick_name을 제거해주고 로그인 페이지로 이동해줘야함 . (또한, intent stack all clear 필요 )
