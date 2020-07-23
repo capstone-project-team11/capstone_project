@@ -131,8 +131,7 @@ data class User(
 data class Setting(
         var pre_nick_name: String,
         var password: String,
-        var new_nick_name: String,
-        var file: MultipartBody.Part
+        var new_nick_name: String
 )
 
 data class cap (

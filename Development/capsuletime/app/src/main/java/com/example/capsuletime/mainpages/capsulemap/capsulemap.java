@@ -30,6 +30,7 @@ import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.User;
 import com.example.capsuletime.cap;
 import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
+import com.example.capsuletime.login.login;
 import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
 import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
 import com.example.capsuletime.mainpages.mypage.mypage;
@@ -113,6 +114,14 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
             retrofitInterface.requestSearchUser(nick_name).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
+
+                    if (response.code() == 401) {
+                        Intent intent = new Intent(getApplicationContext(), login.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+
                     user = response.body();
                     Log.d(TAG, user.toString());
                 }
@@ -281,6 +290,13 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
         retrofitInterface.requestAllCapsules().enqueue(new Callback<List<cap>>() {
             @Override
             public void onResponse(Call<List<cap>> call, Response<List<cap>> response) {
+
+                if (response.code() == 401) {
+                    Intent intent = new Intent(getApplicationContext(), login.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                }
 
                 capsuleList = response.body();
                 Log.d(TAG, response.body().toString() + "curMarkerAdd");

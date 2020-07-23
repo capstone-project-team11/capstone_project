@@ -34,7 +34,7 @@ public class CookieSharedPreferences {
 
     public void deleteHashSet(String key){
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.clear().commit();
+        editor.remove(key).commit();
     }
 
     public HashSet<String> getHashSet(String key, HashSet<String> cookie){

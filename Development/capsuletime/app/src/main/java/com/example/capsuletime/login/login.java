@@ -32,6 +32,7 @@ import com.example.capsuletime.core.preferences.CookieSharedPreferences;
 import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
 import com.example.capsuletime.mainpages.mypage.mypage;
 
+import java.io.IOException;
 import java.util.HashSet;
 
 import retrofit2.Call;
@@ -67,7 +68,6 @@ public class login extends AppCompatActivity {
         btn_sign_in = findViewById(R.id.btn_sign_in);
         btn_sign_up = findViewById(R.id.btn_sign_up);
 
-
         btn_sign_in.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v){
@@ -78,24 +78,26 @@ public class login extends AppCompatActivity {
                 retrofitInterface.requestLogin(id, pw).enqueue(new Callback<Logined>() {
                     @Override
                     public void onResponse(Call<Logined> call, Response<Logined> response) {
-                        Logined auth = response.body();
-                        nick_name = auth.getNick_name();
-                        Log.d(TAG, auth.getNick_name().toString());
-                        // Header Code 확인
-                        //Log.d("TAG",Integer.toString(response.code()));
+                        if (response.code() == 200) {
+                            Logined auth = response.body();
+                            nick_name = auth.getNick_name();
+                            Log.d(TAG, auth.getNick_name().toString());
+                            // Header Code 확인
+                            //Log.d("TAG",Integer.toString(response.code()));
 
-                        if (auth.getNick_name() != null) {
+                            if (auth.getNick_name() != null) {
 
-                            NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
-                            HashSet<String> nickName = new HashSet<String>();
-                            nickName.add(auth.getNick_name());
-                            nickNameSharedPreferences.putHashSet(NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY, nickName);
+                                NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
+                                HashSet<String> nickName = new HashSet<String>();
+                                nickName.add(auth.getNick_name());
+                                nickNameSharedPreferences.putHashSet(NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY, nickName);
 
-                            Toast.makeText(v.getContext(),"정상적으로 로그인 되었습니다.",Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(getApplicationContext(), mypage.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            startActivity(intent);
+                                Toast.makeText(v.getContext(),"정상적으로 로그인 되었습니다.",Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(getApplicationContext(), mypage.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
                         } else {
                             Toast.makeText(v.getContext(),"Id와 Password를 확인해주세요.",Toast.LENGTH_SHORT).show();
                         }
@@ -122,6 +124,34 @@ public class login extends AppCompatActivity {
             }
         });
         /*
+        Call<Logined> call = retrofitInterface.requestSessionAuth();
+        try {
+            Response<Logined> response = call.execute();
+            int code = response.code();
+            Logined auth = response.body();
+            Log.d(TAG, Integer.toString(code));
+            if (code == 200 && auth.getNick_name() != null){
+                NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
+                HashSet<String> nickName = new HashSet<String>();
+                nickName.add(auth.getNick_name());
+                nickNameSharedPreferences.putHashSet(NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY, nickName);
+
+                //Toast.makeText(getApplicationContext(),"정상적으로 로그인 되었습니다.",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(getApplicationContext(), mypage.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                finish();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        */
+
+
+
+
+        /*
         signUp = findViewById(R.id.SignUp);
 
         Spannable span = (Spannable)signUp.getText();
@@ -143,5 +173,42 @@ public class login extends AppCompatActivity {
         },0,6, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         signUp.setMovementMethod(LinkMovementMethod.getInstance());
     */
+    }
+    @Override
+    public void onStart(){
+        super.onStart();
+        Log.d(TAG,"OnStart");
+
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        retrofitInterface.requestSessionAuth().enqueue(new Callback<Logined>() {
+            @Override
+            public void onResponse(Call<Logined> call, Response<Logined> response) {
+                Logined auth = response.body();
+                Log.d(TAG,"response");
+                // 인증된 세션
+                if (response.code() == 200 ){//&& auth.getNick_name() != null) {
+                    NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
+                    HashSet<String> nickName = new HashSet<String>();
+                    nickName.add(auth.getNick_name());
+                    nickNameSharedPreferences.putHashSet(NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY, nickName);
+
+                    //Toast.makeText(getApplicationContext(),"정상적으로 로그인 되었습니다.",Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(getApplicationContext(), mypage.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Logined> call, Throwable t) {
+                Log.d(TAG,t.toString());
+            }
+        });
     }
 }

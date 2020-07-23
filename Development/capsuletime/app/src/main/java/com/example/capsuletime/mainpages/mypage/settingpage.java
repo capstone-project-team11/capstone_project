@@ -42,6 +42,7 @@ import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.Setting;
 import com.example.capsuletime.Success;
 import com.example.capsuletime.User;
+import com.example.capsuletime.core.preferences.CookieSharedPreferences;
 import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
 import com.example.capsuletime.login.CustomDialog;
 import com.example.capsuletime.login.SignUp1;
@@ -49,6 +50,7 @@ import com.example.capsuletime.login.SignUp2;
 import com.example.capsuletime.login.login;
 import com.example.capsuletime.mainpages.followpage.Follow;
 import com.example.capsuletime.mainpages.followpage.FollowLogAdapter;
+import com.example.capsuletime.mainpages.followpage.followpage;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -126,53 +128,119 @@ public class settingpage extends AppCompatActivity {
                 String password = et_pw.getText().toString();
                 String new_nick_name = et_nick.getText().toString();
 
-                String absoulutePath = getPath(v.getContext(), cropUri);
-                File file = new File(absoulutePath);
-                String type = getMimeType(file);
-                RequestBody requestImage = RequestBody.create(MediaType.parse(type), file);
-                MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), requestImage);
-                Log.d(TAG, "파일 이름 = " + file.getName().toString() + " " + requestImage.toString());
 
-                /*RequestBody user_id2 = RequestBody.create(MediaType.parse("text/plain"), nick_name);
+                    /*String absoulutePath = getPath(v.getContext(), cropUri);
+                    File file = new File(absoulutePath);
+                    String type = getMimeType(file);
+                    RequestBody requestImage = RequestBody.create(MediaType.parse(type), file);
+                    MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), requestImage);
+                    Log.d(TAG, "파일 이름 = " + file.getName().toString() + " " + requestImage.toString());*/
+
+
+                RequestBody user_id2 = RequestBody.create(MediaType.parse("text/plain"), nick_name);
                 RequestBody password2 = RequestBody.create(MediaType.parse("text/plain"), et_pw.getText().toString());
-                RequestBody nick_name2 = RequestBody.create(MediaType.parse("text/plain"), et_nick.getText().toString());*/
+                RequestBody nick_name2 = RequestBody.create(MediaType.parse("text/plain"), et_nick.getText().toString());
 
 
-                Setting setting = new Setting(nick_name, password, new_nick_name, multipartBody);
+                Setting setting = new Setting(nick_name, password, new_nick_name);
 
                 Log.d(TAG, "수정 = " + setting.toString());
 
                 retrofitInterface.settingUser(setting);
 
-                Call<List<Setting>> call = retrofitInterface.settingUser(setting);
 
-                call.enqueue(new Callback<List<Setting>>() {
+                /*Call<User> call2 = retrofitInterface.requestSearchUser(nick_name);
+                call2.enqueue(new Callback<User>() {
                     @Override
-                    public void onResponse(Call<List<Setting>> call, Response<List<Setting>> response) {
-                        if (response.code() == 401) {
-                            Intent intent = new Intent(getApplicationContext(), login.class);
+                    public void onResponse(Call<User> call, Response<User> response) {
+                        user = response.body();
+                        Log.d(TAG, "유저 정보" +user.toString());
+                    }
+
+                    @Override
+                    public void onFailure(Call<User> call, Throwable t) {
+
+                    }
+                });*/
+
+
+                if (cropUri != null) {
+                    String absoulutePath = getPath(v.getContext(), cropUri);
+                    File file = new File(absoulutePath);
+                    String type = getMimeType(file);
+                    RequestBody requestImage = RequestBody.create(MediaType.parse(type), file);
+                    MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), requestImage);
+                    Log.d(TAG, "파일 이름 = " + file.getName().toString() + " " + requestImage.toString());
+
+                    Call<Success> call = retrofitInterface.settingUser2(user_id2, password2, nick_name2, multipartBody);
+
+                    call.enqueue(new Callback<Success>() {
+                        @Override
+                        public void onResponse(Call<Success> call, Response<Success> response) {
+                            if (response.code() == 401) {
+                                Intent intent = new Intent(getApplicationContext(), login.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
+
+                            // 기존 닉네임 삭제 및 새 닉네임 등록
+                            NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
+                            nickNameSharedPreferences.deleteHashSet(NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY);
+
+                            HashSet<String> nickName = new HashSet<String>();
+                            nickName.add(new_nick_name);
+                            nickNameSharedPreferences.putHashSet(NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY, nickName);
+
+                            Intent intent = new Intent(getApplicationContext(), mypage.class);
                             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             startActivity(intent);
+                            overridePendingTransition(0,0);
+
+                            //
                         }
 
-                        // 기존 닉네임 삭제 및 새 닉네임 등록
-                        NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
-                        nickNameSharedPreferences.deleteHashSet(NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY);
+                        @Override
+                        public void onFailure(Call<Success> call, Throwable t) {
 
-                        HashSet<String> nickName = new HashSet<String>();
-                        nickName.add(new_nick_name);
-                        nickNameSharedPreferences.putHashSet(NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY, nickName);
+                        }
+                    });
+                } else {
+                    Call<Success> call = retrofitInterface.settingUser(setting);
 
-                        //
-                    }
+                    call.enqueue(new Callback<Success>() {
+                        @Override
+                        public void onResponse(Call<Success> call, Response<Success> response) {
+                            if (response.code() == 401) {
+                                Intent intent = new Intent(getApplicationContext(), login.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                            }
 
-                    @Override
-                    public void onFailure(Call<List<Setting>> call, Throwable t) {
+                            // 기존 닉네임 삭제 및 새 닉네임 등록
+                            NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
+                            nickNameSharedPreferences.deleteHashSet(NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY);
 
-                    }
-                });
+                            HashSet<String> nickName = new HashSet<String>();
+                            nickName.add(new_nick_name);
+                            nickNameSharedPreferences.putHashSet(NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY, nickName);
 
+                            Intent intent = new Intent(getApplicationContext(), mypage.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                            overridePendingTransition(0,0);
+                            //
+                        }
+
+                        @Override
+                        public void onFailure(Call<Success> call, Throwable t) {
+
+                        }
+                    });
+                }
             }
 
         });
@@ -499,6 +567,3 @@ public class settingpage extends AppCompatActivity {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
     }
 }
-
-
-

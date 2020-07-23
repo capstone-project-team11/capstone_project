@@ -29,9 +29,9 @@ public class ReceivedCookiesInterceptor implements Interceptor {
             HashSet<String> cookies = new HashSet<>();
 
             for (String header : response.headers("Set-Cookie")){
+                Log.d("Cookie", header.toString());
                 cookies.add(header);
             }
-
             cookieSharedPreferences.putHashSet(CookieSharedPreferences.COOKIE_SHARED_PREFERENCES_KEY, cookies);
 
         }

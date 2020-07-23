@@ -129,7 +129,7 @@ public class userpage extends AppCompatActivity {
                         }
                     } else {
                         iv_user.setImageResource(R.drawable.user);
-                        tv_nick.setText("서버통신오류");
+                        tv_nick.setText("");
                     }
                 }
 

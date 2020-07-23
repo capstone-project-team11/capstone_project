@@ -114,13 +114,26 @@ interface RetrofitInterface {
             @Part("new_nick_name") new_nick_name: RequestBody,
             @Part file: MultipartBody.Part*/
             @Body setting: Setting
-    ):Call<List<Setting>>
+    ):Call<Success>
+
+    @Multipart
+    @PUT("/users/images")
+    fun settingUser2(
+            @Part("pre_nick_name") pre_nick_name: RequestBody,
+            @Part("password") password: RequestBody,
+            @Part("new_nick_name") new_nick_name: RequestBody,
+            @Part file: MultipartBody.Part
+    ):Call<Success>
 
     @GET("/capsules/")
     fun requestAllCapsules():Call <List<cap>>
 
     @GET("/capsules/")
     fun requestUserCapsules()
-            :Call <List<cap>>
+    :Call <List<cap>>
+
+    @GET("/session/")
+    fun requestSessionAuth()
+    :Call <Logined>
 
 }
