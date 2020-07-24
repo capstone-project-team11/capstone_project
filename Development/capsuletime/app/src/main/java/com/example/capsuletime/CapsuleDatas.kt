@@ -32,7 +32,12 @@ data class Capsule (
         val status_temp: Int,
         val lat: Double,
         val lng: Double,
-        val content: List<Content>?
+        val content: List<Content>?,
+        var expire: String?,
+        var status_lock: Int,
+        var key_count: Int,
+        var used_key_count: Int,
+        var member: List<String>?
 )
 
 data class CapsuleLogData (

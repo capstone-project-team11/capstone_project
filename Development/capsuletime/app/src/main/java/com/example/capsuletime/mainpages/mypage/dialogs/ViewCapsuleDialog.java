@@ -100,8 +100,7 @@ public class ViewCapsuleDialog {
             Log.d("list", capsuleLogData.getContentList().toString());
             Uri uri;
 
-            if (capsuleLogData.getContentList().get(0).getUrl() == null){
-
+            if (capsuleLogData.getContentList().size() == 0){
                 uri = Uri.parse("android.resource://com.example.capsuletime/drawable/capsule_marker_yellow");
                 listUri.add(uri);
             } else {
