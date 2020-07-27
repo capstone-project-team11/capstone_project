@@ -25,24 +25,26 @@ import com.example.capsuletime.mainpages.userpage.userpage;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.TreeSet;
 
 ;
 
 
 public class SettingFriendLogAdapter extends RecyclerView.Adapter<SettingFriendLogAdapter.FolloewLogAdapter> {
 
-    private  ArrayList<Locked_Capsule> arrayList;
+    private ArrayList<Locked_Capsule> arrayList;
+    private TreeSet<String> result;
     private Context context;
     private static final String TAG = "FollowLogAdapterPage";
-    private int count = 0;
     private int j = 0;
     private int k = 0;
     private int l = 0;
     private int m = 0;
     private int n = 0;
 
-    public SettingFriendLogAdapter(ArrayList<Locked_Capsule> arrayList, Context context) {
+    public SettingFriendLogAdapter(ArrayList<Locked_Capsule> arrayList, TreeSet<String> result, Context context) {
         this.arrayList = arrayList;
+        this.result = result;
         this.context = context;
     }
 
@@ -57,8 +59,6 @@ public class SettingFriendLogAdapter extends RecyclerView.Adapter<SettingFriendL
         return holder;
     }
 
-
-
     @Override
     public void onBindViewHolder(@NonNull FolloewLogAdapter holder, int position) {
 
@@ -70,61 +70,30 @@ public class SettingFriendLogAdapter extends RecyclerView.Adapter<SettingFriendL
         holder.tv_name.setText(arrayList.get(position).getName());
         holder.chkSelected.setSelected(arrayList.get(position).isSelected());
 
-
-        LockNickNameSharedPreferences lockNickNameSharedPreferences = LockNickNameSharedPreferences.getInstanceOf(context.getApplicationContext());
-        ArrayList<String> nickName = new ArrayList<String>();
-
         holder.chkSelected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if(isChecked) {
-                    count++;
-
-                    /*if(nickName.size() != 0) {*/
-                        for (int i = 0; i < count; i++) {
-                                nickName.add(i, arrayList.get(position).getNick_name());
-                        }
-                    Log.d(TAG, nickName.toString());
-
-
-                    /*}*/
-                    /*nickName.add(arrayList.get(position).getNick_name());
-                    lockNickNameSharedPreferences.putHashSet(LockNickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY2, nickName);*/
-
-
-
-                    Log.d(TAG,arrayList.get(position).getNick_name()+" " + count);
-                } else {
-                    for (int i = 0; i < count; i++) {
-                        if (!isChecked) {
-                            nickName.remove(arrayList.get(i).getNick_name());
-
-                            count--;
-                            Log.d(TAG, nickName.toString());
-                        }
+                if (arrayList.size() > position){
+                    String str = arrayList.get(position).getNick_name();
+                    if(isChecked) {
+                        result.add(str);
+                    } else {
+                        result.remove(str);
                     }
+                    Log.d(TAG, result.toString());
                 }
-                lockNickNameSharedPreferences.putHashSet(LockNickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY2, nickName);
             }
         });
-
-
-
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 if(holder.chkSelected.isChecked()){
                     holder.chkSelected.setChecked(holder.chkSelected.isChecked());
                 } else {
                     holder.chkSelected.setChecked(holder.chkSelected.isChecked());
                 }
-
-
             }
         });
-
-
     }
 
     @Override

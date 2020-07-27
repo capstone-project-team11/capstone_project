@@ -11,8 +11,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClient {
     //객체생성
-    //String URL = "http://121.135.70.3:7070";
-    String URL = "http://59.13.134.140:7070";
+
+    String URL = "http://121.135.70.3:7070";
+    //String URL = "http://59.13.134.140:7070";
     public RetrofitInterface retrofitInterface;
     public RetrofitClient(Context context) {
         OkHttpClient okHttpClient = new OkHttpClient.Builder()

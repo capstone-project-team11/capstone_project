@@ -43,6 +43,7 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.TreeSet;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,6 +57,7 @@ public class CustomSettingLockDialog {
     private String lock_nick_name;
     private RetrofitInterface retrofitInterface;
     private ArrayList<Locked_Capsule> arrayList;
+    private TreeSet<String> result;
     private SettingFriendLogAdapter settingFriendLogAdapter;
     private List<User> userList;
     private static final String TAG = "Setting_Lock_Capsule";
@@ -136,13 +138,12 @@ public class CustomSettingLockDialog {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         arrayList = new ArrayList<>();
-        settingFriendLogAdapter = new SettingFriendLogAdapter(arrayList, context);
+        result = new TreeSet<>();
+        settingFriendLogAdapter = new SettingFriendLogAdapter(arrayList, result, context);
         recyclerView.setAdapter(settingFriendLogAdapter);
-
 
         RetrofitClient retrofitClient = new RetrofitClient(dlg.getContext());
         retrofitInterface = retrofitClient.retrofitInterface;
-
 
         String inStr = (nick_name != null) ? nick_name : user.getNick_name();
         retrofitInterface.requestFollower(inStr).enqueue(new Callback<List<User>>() {
@@ -166,17 +167,12 @@ public class CustomSettingLockDialog {
                                     for (User user : userList) {
                                         String nick_name3 = user.getNick_name();
 
-
                                         if(inStr.equals(nick_name3)) {
                                             Log.d(TAG, nick_name.toString() + first_name.toString() + last_name.toString() + image_url.toString() + isChecked);
-
-
                                             Locked_Capsule locked = new Locked_Capsule(image_url, nick_name2, last_name + first_name, isChecked);
                                             arrayList.add(locked);
                                             settingFriendLogAdapter.notifyDataSetChanged(); // redirect
                                         }
-
-
                                     }
                                 }
                             }
