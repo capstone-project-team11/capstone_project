@@ -41,6 +41,7 @@ import com.example.capsuletime.mainpages.capsulemap.capsulemap;
 import com.example.capsuletime.mainpages.followpage.Follow;
 import com.example.capsuletime.mainpages.followpage.followerpage;
 import com.example.capsuletime.mainpages.followpage.followpage;
+import com.example.capsuletime.mainpages.mypage.setting.settingpage;
 import com.example.capsuletime.mainpages.searchpage.searchpage;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
@@ -65,6 +66,7 @@ public class mypage extends AppCompatActivity {
 
     private String user_id;
     private String nick_name;
+    private String url;
     private int capsule_id;
     private ArrayList<CapsuleLogData> arrayList;
     private ArrayList<Comment> arrayList2;
@@ -146,9 +148,9 @@ public class mypage extends AppCompatActivity {
                         } else {
                             Log.d(TAG,"url not null");
                             Glide
-                                .with(getApplicationContext())
-                                .load(user.getImage_url())
-                                .into(iv_user);
+                                    .with(getApplicationContext())
+                                    .load(user.getImage_url())
+                                    .into(iv_user);
                         }
 
                     } else {
@@ -243,7 +245,7 @@ public class mypage extends AppCompatActivity {
                             int capsule_id = capsule.getCapsule_id();
                             String title = capsule.getTitle() != null ? capsule.getTitle() : "";
                             String url = capsule.getContent().size() != 0 ?
-                                        capsule.getContent().get(0).getUrl() : Integer.toString(R.drawable.capsule_marker_angry);
+                                    capsule.getContent().get(0).getUrl() : Integer.toString(R.drawable.capsule_marker_angry);
                             List<Content> contentList = capsule.getContent();
                             String created_date = capsule.getDate_created();
                             String opened_date = capsule.getDate_created();

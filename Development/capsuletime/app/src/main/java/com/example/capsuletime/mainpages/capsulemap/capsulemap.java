@@ -362,15 +362,12 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
             @Override
             public boolean onMarkerClick(Marker marker) {
                 // 마커 클릭시 호출되는 콜백 메서드
-
                 Intent intent = new Intent(getApplicationContext(), PopUpActivity.class);
                 intent.putExtra("user_id",marker.getTitle());
                 startActivityForResult(intent, 1);
-
                 //Toast.makeText(getApplicationContext(),
                 //" 클릭했음" + capsuleList.get(1)
                 //, Toast.LENGTH_SHORT).show();
-
                 return false;
             }
         });

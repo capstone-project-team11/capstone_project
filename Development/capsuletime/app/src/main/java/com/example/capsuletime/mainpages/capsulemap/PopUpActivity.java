@@ -17,9 +17,13 @@ import com.example.capsuletime.R;
 import com.example.capsuletime.RetrofitClient;
 import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.User;
+import com.example.capsuletime.mainpages.followpage.Follow;
 import com.example.capsuletime.mainpages.userpage.userpage;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -29,6 +33,7 @@ public class PopUpActivity extends AppCompatActivity {
     private TextView textView;
     private RetrofitInterface retrofitInterface;
     private User user;
+    private List<User> userList;
     private static final String TAG = "Mypage";
     private String user_id;
     private String nick_name;
@@ -48,6 +53,8 @@ public class PopUpActivity extends AppCompatActivity {
         user_id = intent.getStringExtra("user_id");
         nick_name = intent.getStringExtra("nick_name");
 
+        ImageView imageView1 = (ImageView) findViewById(R.id.follow) ;
+        imageView1.setImageResource(R.drawable.follow_icon1) ;
 
         search();
 
@@ -111,13 +118,38 @@ public class PopUpActivity extends AppCompatActivity {
             Log.d(TAG,"user exist not");
         }
 
-
         TextView tv_user_id = (TextView)findViewById(R.id.tv_user_id);
         TextView tv_name = (TextView)findViewById(R.id.tv_name);
         tv_user_id.setText(user.getUser_id());
         String name = user.getLast_name() + user.getFirst_name();
         tv_name.setText(name);
 
+        String inStr = (nick_name != null) ? nick_name : user.getNick_name();
+        retrofitInterface.requestFollow(inStr).enqueue(new Callback<List<User>>() {
+            @Override
+            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                userList = response.body();
+                Log.d(TAG, userList.toString());
+                if (userList != null) {
+                    for (User user : userList) {
+
+                        ImageView imageView1 = (ImageView) findViewById(R.id.follow) ;
+                        imageView1.setImageResource(R.drawable.follow_icon1) ;
+
+                    }
+                } else {
+
+                    ImageView imageView1 = (ImageView) findViewById(R.id.follow) ;
+                    imageView1.setImageResource(R.drawable.follow_icon2) ;
+
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<User>> call, Throwable t) {
+
+            }
+        });
 
     }
 

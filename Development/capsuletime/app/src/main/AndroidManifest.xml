@@ -42,7 +42,7 @@
 
         <activity android:name=".mainpages.mypage.mypage" />
         <activity android:name=".mainpages.mypage.mypage_map" />
-        <activity android:name=".mainpages.mypage.settingpage" />
+        <activity android:name=".mainpages.mypage.setting.settingpage" />
         <activity android:name=".mainpages.userpage.userpage" />
         <activity android:name=".mainpages.userpage.userpage_map" />
         <activity android:name=".mainpages.capsulemap.capsulemap" />

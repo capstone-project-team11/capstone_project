@@ -9,7 +9,7 @@ import android.view.Window;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.capsuletime.R;
-import com.example.capsuletime.login.SignUp2;
+import com.example.capsuletime.mainpages.mypage.setting.settingpage;
 
 public class CustomSettingDialog {
     private Context context;

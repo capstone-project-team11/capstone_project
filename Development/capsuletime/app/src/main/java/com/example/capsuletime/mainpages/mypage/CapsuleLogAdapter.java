@@ -128,6 +128,7 @@ public class CapsuleLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     Intent intent = new Intent(v.getContext(), ModifyCapsule.class);
                     intent.putExtra("capsule_id", arrayList.get(position).getCapsule_id());
                     intent.putExtra("user_id", arrayList.get(position).getUser_id());
+                    intent.putExtra("user", user);
                     v.getContext().startActivity(intent);
 
                     //remove(((TempCapsuleViewHolder) holder).getAdapterPosition());

@@ -36,7 +36,10 @@ import com.example.capsuletime.R;
 import com.example.capsuletime.RetrofitClient;
 import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.Success;
+import com.example.capsuletime.User;
+import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
 import com.example.capsuletime.login.login;
+import com.example.capsuletime.mainpages.mypage.setting.CustomSettingLockDialog;
 import com.google.android.material.tabs.TabLayout;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
@@ -48,6 +51,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
@@ -66,6 +70,7 @@ public class ModifyCapsule extends AppCompatActivity {
     private static final int CROP_FROM_iMAGE = 2;
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 100;
     private int capsule_id;
+    private String nick_name;
     private List<Uri> list;
     private Boolean EmptyUriListFlag;
     private Uri photoUri;
@@ -76,6 +81,7 @@ public class ModifyCapsule extends AppCompatActivity {
     private String imageFilePath;
     private String user_id;
     private CardView btn_imageClose;
+    private User user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,6 +96,20 @@ public class ModifyCapsule extends AppCompatActivity {
         Intent intent = getIntent();
         capsule_id = intent.getIntExtra("capsule_id",-1);
         user_id = intent.getStringExtra("user_id");
+
+        NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
+        HashSet<String> nickNameSharedPrefer = (HashSet<String>) nickNameSharedPreferences.getHashSet(
+                NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY,
+                new HashSet<String>()
+        );
+        int count = 0;
+        for (String nick : nickNameSharedPrefer) {
+            if (count == 0){
+                nick_name = nick;
+            }
+            count ++;
+        }
+
         /*
         list.add("http://118.44.168.218:7070/contents/1.jpeg");
         list.add("http://118.44.168.218:7070/contents/2.jpeg");
@@ -98,6 +118,7 @@ public class ModifyCapsule extends AppCompatActivity {
         btn_imageClose = (CardView) findViewById(R.id.btn_imageClose);
         Button btn_cancel = (Button) findViewById(R.id.btn_delete);
         Button btn_set = (Button)findViewById(R.id.btn_set);
+        Button switch1 = (Button)findViewById(R.id.switch1);
         EditText tv_title = (EditText)findViewById(R.id.tv_title);
         EditText tv_text = (EditText)findViewById(R.id.tv_text);
 
@@ -124,6 +145,14 @@ public class ModifyCapsule extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+
+        switch1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomSettingLockDialog custom_dlg = new CustomSettingLockDialog(ModifyCapsule.this);
+                custom_dlg.callFunction();
             }
         });
 

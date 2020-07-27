@@ -130,10 +130,10 @@ interface RetrofitInterface {
 
     @GET("/capsules/")
     fun requestUserCapsules()
-    :Call <List<cap>>
+            :Call <List<cap>>
 
     @GET("/session/")
     fun requestSessionAuth()
-    :Call <Logined>
+            :Call <Logined>
 
 }

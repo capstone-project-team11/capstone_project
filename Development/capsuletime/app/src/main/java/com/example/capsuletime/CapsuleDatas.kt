@@ -19,6 +19,7 @@ data class Content (
         val url: String?
 )
 
+
 data class Capsule (
         val capsule_id: Int,
         val user_id: String,
@@ -33,11 +34,11 @@ data class Capsule (
         val lat: Double,
         val lng: Double,
         val content: List<Content>?,
-        var expire: String?,
-        var status_lock: Int,
-        var key_count: Int,
-        var used_key_count: Int,
-        var member: List<String>?
+        val expire: String,
+        val status_lock: Int,
+        val key_count: Int,
+        val used_key_count: Int,
+        val members: List<String>?
 )
 
 data class CapsuleLogData (
@@ -153,4 +154,3 @@ data class cap (
         var lat: Double,
         var lng: Double
 )
-

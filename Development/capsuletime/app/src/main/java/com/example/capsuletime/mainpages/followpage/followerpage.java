@@ -3,6 +3,8 @@ package com.example.capsuletime.mainpages.followpage;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -80,6 +82,15 @@ public class followerpage extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<User>> call, Throwable t) {
 
+            }
+        });
+
+        Button imageButton4 = (Button) findViewById(R.id.button4);
+        imageButton4.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
 

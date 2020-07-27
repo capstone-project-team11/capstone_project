@@ -36,6 +36,8 @@ import com.example.capsuletime.User;
 import com.example.capsuletime.login.login;
 import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
 import com.example.capsuletime.mainpages.capsulemap.PopUpActivity;
+import com.example.capsuletime.mainpages.followpage.followerpage;
+import com.example.capsuletime.mainpages.followpage.followpage;
 import com.example.capsuletime.mainpages.mypage.mypage;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -175,46 +177,47 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
                 Log.d(TAG, user.toString());
                 startActivity(intent);
                 overridePendingTransition(0, 0);
+                finish();
             }
         });
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
+        Button imageButton2 = (Button) findViewById(R.id.button5);
+        imageButton2.setOnClickListener(new View.OnClickListener() {
 
-        //Set mypage Selected
-        bottomNavigationView.setSelectedItemId(R.id.capsulemap);
-        bottomNavigationView.getMenu().getItem(0).setChecked(true);
-        bottomNavigationView.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
-
-
-
-        //Perform ItemSelectedListener
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.mypage: {
-                        Intent intent = new Intent(getApplicationContext(), mypage.class);
-                        intent.putExtra("user", user);
-                        startActivity(intent);
-                        overridePendingTransition(0,0);
-                        return true;
-                    }
-                    case R.id.capsulemap:
-                        return true;
-
-                    case R.id.capsulear: {
-
-                        Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
-                        intent.putExtra("userId", user);
-                        startActivity(intent);
-                        overridePendingTransition(0,0);
-                        //return true;
-                    }
-                }
-                return false;
-
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), followpage.class);
+                intent.putExtra("nick_name", user.getNick_name());
+                intent.putExtra("user", user);
+                Log.d(TAG, user.toString());
+                startActivity(intent);
+                overridePendingTransition(0, 0);
             }
         });
+
+        Button imageButton3 = (Button) findViewById(R.id.button6);
+        imageButton3.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), followerpage.class);
+                intent.putExtra("nick_name", user.getNick_name());
+                intent.putExtra("user", user);
+                Log.d(TAG, user.toString());
+                startActivity(intent);
+                overridePendingTransition(0, 0);
+            }
+        });
+
+        Button imageButton4 = (Button) findViewById(R.id.button4);
+        imageButton4.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+
 
         if (Build.VERSION.SDK_INT >= 23 &&
                 ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

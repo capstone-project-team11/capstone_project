@@ -1,10 +1,18 @@
-package com.example.capsuletime.mainpages.followpage;
+package com.example.capsuletime.mainpages.mypage.setting;
 
-public class Follow {
+public class Locked_Capsule {
     private String profile;
     private String nick_name;
     private String name;
+    private boolean isSelected;
 
+    public boolean isSelected() {
+        return isSelected;
+    }
+
+    public void setSelected(boolean selected) {
+        isSelected = selected;
+    }
 
     public String getProfile() {
         return profile;
@@ -30,9 +38,10 @@ public class Follow {
         this.name = name;
     }
 
-    public Follow(String profile, String nick_name, String name) {
+    public Locked_Capsule(String profile, String nick_name, String name, boolean isSelected) {
         this.profile = profile;
         this.nick_name = nick_name;
         this.name = name;
+        this.isSelected = isSelected;
     }
 }

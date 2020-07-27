@@ -9,38 +9,40 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="-44dp"
+        tools:layout_editor_absoluteY="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_capsule"
-            android:layout_width="320dp"
-            android:layout_height="68dp"
-            android:layout_marginTop="7.5dp"
+            android:layout_width="207dp"
+            android:layout_height="63dp"
             android:layout_marginLeft="60dp"
+            android:layout_marginTop="7.5dp"
             android:layout_marginBottom="5dp"
 
             android:background="@drawable/radius_capsule_log">
 
 
             <TextView
-            android:id="@+id/tv_nick"
-            android:layout_width="150dp"
-            android:layout_height="35dp"
-            android:layout_marginStart="60dp"
-            android:layout_marginLeft="60dp"
-            android:layout_marginTop="10dp"
-            android:ellipsize="end"
-            android:singleLine="true"
-            android:text="nick_name"
-            android:textColor="#404040"
-            android:textSize="20sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+                android:id="@+id/tv_nick"
+                android:layout_width="141dp"
+                android:layout_height="31dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="nick_name"
+                android:textColor="#404040"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_name"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.19999999" />
 
             <TextView
                 android:id="@+id/tv_name"
-                android:layout_width="150dp"
-                android:layout_height="35dp"
+                android:layout_width="141dp"
+                android:layout_height="29dp"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:text="name"
@@ -48,18 +50,32 @@
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.352"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="1.0" />
+                app:layout_constraintVertical_bias="0.86" />
+
+            <CheckBox
+                android:id="@+id/chkSelected"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:checked="false"
+                android:selectAllOnFocus="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.908"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.516" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/iv_thumb_card"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="49dp"
+            android:layout_height="51dp"
             android:layout_marginStart="26dp"
             android:layout_marginLeft="16dp"
             android:layout_marginTop="13dp"
@@ -77,32 +93,13 @@
 
 
             <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/iv_profile"
-                    android:layout_width="60dp"
-                    android:layout_height="60dp"
-                    android:src="@drawable/capsule_marker_rainbow" />
-
-            </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="60dip"
-            android:layout_height="60dip"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="320dip"
-            android:shape="ring"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:cardElevation="0dp"
-            app:cardPreventCornerOverlap="true"
-            app:cardUseCompatPadding="false"
-            app:contentPadding="0dp">
-
-            <ImageView
-                android:id="@+id/follow"
-                android:layout_width="match_parent"
+                android:id="@+id/iv_profile"
+                android:layout_width="60dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="center_vertical" />
+                android:src="@drawable/capsule_marker_rainbow" />
 
         </androidx.cardview.widget.CardView>
+
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

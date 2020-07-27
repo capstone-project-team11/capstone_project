@@ -135,7 +135,6 @@ public class login extends AppCompatActivity {
                 HashSet<String> nickName = new HashSet<String>();
                 nickName.add(auth.getNick_name());
                 nickNameSharedPreferences.putHashSet(NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY, nickName);
-
                 //Toast.makeText(getApplicationContext(),"정상적으로 로그인 되었습니다.",Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(getApplicationContext(), mypage.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -153,7 +152,6 @@ public class login extends AppCompatActivity {
 
         /*
         signUp = findViewById(R.id.SignUp);
-
         Spannable span = (Spannable)signUp.getText();
         ForegroundColorSpan foregroundSpan = new ForegroundColorSpan(Color.GRAY);
         span.setSpan(foregroundSpan, 0, span.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -169,7 +167,6 @@ public class login extends AppCompatActivity {
                 textPaint.setColor(login.this.getResources().getColor(R.color.gray));
                 textPaint.setUnderlineText(true);
             }
-
         },0,6, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         signUp.setMovementMethod(LinkMovementMethod.getInstance());
     */

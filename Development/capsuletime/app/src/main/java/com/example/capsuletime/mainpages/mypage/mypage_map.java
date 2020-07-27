@@ -39,6 +39,7 @@ import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
 import com.example.capsuletime.mainpages.capsulemap.PopUpActivity;
 import com.example.capsuletime.mainpages.followpage.followerpage;
 import com.example.capsuletime.mainpages.followpage.followpage;
+import com.example.capsuletime.mainpages.mypage.setting.settingpage;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -144,7 +145,7 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
 
                     } else {
                         iv_user.setImageResource(R.drawable.user);
-                        tv_nick.setText("");
+                        tv_nick.setText("서버통신오류");
                     }
                 }
 

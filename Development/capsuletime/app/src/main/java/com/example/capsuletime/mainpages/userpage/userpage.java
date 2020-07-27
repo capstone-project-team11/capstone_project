@@ -129,7 +129,7 @@ public class userpage extends AppCompatActivity {
                         }
                     } else {
                         iv_user.setImageResource(R.drawable.user);
-                        tv_nick.setText("");
+                        tv_nick.setText("서버통신오류");
                     }
                 }
 
@@ -141,54 +141,7 @@ public class userpage extends AppCompatActivity {
 
         }
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav);
 
-        //Set mypage Selected
-        bottomNavigationView.setSelectedItemId(R.id.mypage);
-        bottomNavigationView.getMenu().getItem(0).setChecked(true);
-        bottomNavigationView.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
-
-        //Perform ItemSelectedListener
-        bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(@NonNull MenuItem menuItem) {
-                if (user != null) {
-
-                    switch (menuItem.getItemId()) {
-                        case R.id.mypage:
-                            return true;
-
-                        case R.id.capsulemap: {
-                            if (Build.VERSION.SDK_INT >= 23 &&
-                                    ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                ActivityCompat.requestPermissions(com.example.capsuletime.mainpages.userpage.userpage.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                                        0);
-                                break;
-                            } else if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
-
-                                Intent intent = new Intent(getApplicationContext(), capsulemap.class);
-                                intent.putExtra("user", user);
-                                startActivity(intent);
-                                overridePendingTransition(0, 0);
-
-                                return true;
-
-                            }
-                        }
-                        case R.id.capsulear: {
-                            //bottomNavigationView.getMenu().getItem(0).setChecked(true);
-                            Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
-                            intent.putExtra("userId", user);
-                            startActivity(intent);
-                            overridePendingTransition(0, 0);
-                            //return true;
-                        }
-                    }
-                }
-                bottomNavigationView.setSelectedItemId(R.id.mypage);
-                return false;
-            }
-        });
 
         String inStr = (nick_name != null) ? nick_name : user.getNick_name();
         if (inStr != null)
@@ -211,7 +164,7 @@ public class userpage extends AppCompatActivity {
                             int state_temp = capsule.getStatus_temp();
                             int capsule_id = capsule.getCapsule_id();
                             String title = capsule.getTitle() != null ? capsule.getTitle() : "";
-                            String url = capsule.getContent().get(0).getUrl() != null ?
+                            String url = capsule.getContent().size() != 0 ?
                                     capsule.getContent().get(0).getUrl() : Integer.toString(R.drawable.capsule_marker_angry);
                             List<Content> contentList = capsule.getContent();
                             String created_date = capsule.getDate_created();
@@ -298,6 +251,7 @@ public class userpage extends AppCompatActivity {
                 Log.d(TAG, user.toString());
                 startActivity(intent);
                 overridePendingTransition(0, 0);
+                finish();
             }
         });
 
@@ -326,6 +280,15 @@ public class userpage extends AppCompatActivity {
                 Log.d(TAG, user.toString());
                 startActivity(intent);
                 overridePendingTransition(0, 0);
+            }
+        });
+
+        Button imageButton4 = (Button) findViewById(R.id.button4);
+        imageButton4.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View view) {
+                finish();
             }
         });
     }

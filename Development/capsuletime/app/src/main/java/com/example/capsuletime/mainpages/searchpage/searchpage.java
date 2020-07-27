@@ -123,6 +123,7 @@ public class searchpage extends AppCompatActivity {
             public boolean onQueryTextChange(String newText) {
                 arrayList.clear();
                 String query = searchView.getQuery().toString();
+                if(query.isEmpty() || query.equals("")){arrayList.clear();}
                 search(query);
                 return true;
 
