@@ -242,6 +242,7 @@ public class mypage extends AppCompatActivity {
                     if (capsuleList != null) {
                         for (Capsule capsule : capsuleList) {
                             int state_temp = capsule.getStatus_temp();
+                            int state_lock = capsule.getStatus_lock();
                             int capsule_id = capsule.getCapsule_id();
                             String title = capsule.getTitle() != null ? capsule.getTitle() : "";
                             String url = capsule.getContent().size() != 0 ?
@@ -252,6 +253,7 @@ public class mypage extends AppCompatActivity {
                             String location = "Default";
                             String d_day = "0";
                             String text = capsule.getText();
+                            int likes = capsule.getLikes();
                             // UTC Time control
 
 
@@ -304,8 +306,8 @@ public class mypage extends AppCompatActivity {
                             Log.d(TAG,url+" "+title+" "+created_date+" "+opened_date+" "+location+" "+state_temp);
 
                             CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, d_day,
-                                    url, title, text, "#절친 #평생친구", created_date,
-                                    opened_date, location, state_temp, contentList);
+                                    url, title, text,likes, "#절친 #평생친구", created_date,
+                                    opened_date, location, state_temp, state_lock, contentList);
                             arrayList.add(capsuleLogData);
                             capsuleLogAdapter.notifyDataSetChanged(); // redirect
                         }

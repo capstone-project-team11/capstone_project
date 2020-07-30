@@ -4,7 +4,7 @@ public class Follow {
     private String profile;
     private String nick_name;
     private String name;
-
+    private int status_follow;
 
     public String getProfile() {
         return profile;
@@ -30,9 +30,18 @@ public class Follow {
         this.name = name;
     }
 
-    public Follow(String profile, String nick_name, String name) {
+    public int getStatus_follow() {
+        return status_follow;
+    }
+
+    public void setStatus_follow(int status_follow) {
+        this.status_follow = status_follow;
+    }
+
+    public Follow(String profile, String nick_name, String name, int status_follow) {
         this.profile = profile;
         this.nick_name = nick_name;
         this.name = name;
+        this.status_follow = status_follow;
     }
 }

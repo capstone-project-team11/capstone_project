@@ -20,7 +20,10 @@ import android.util.Log;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -82,10 +85,15 @@ public class ModifyCapsule extends AppCompatActivity {
     private String user_id;
     private CardView btn_imageClose;
     private User user;
+    private TextView main_label;
+    private int status_lock;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify_capsule);
+
+        final TextView main_label = (TextView) findViewById(R.id.date);
+        final TextView main_label2 = (TextView) findViewById(R.id.members);
 
 
         RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
@@ -110,6 +118,8 @@ public class ModifyCapsule extends AppCompatActivity {
             count ++;
         }
 
+
+
         /*
         list.add("http://118.44.168.218:7070/contents/1.jpeg");
         list.add("http://118.44.168.218:7070/contents/2.jpeg");
@@ -118,6 +128,7 @@ public class ModifyCapsule extends AppCompatActivity {
         btn_imageClose = (CardView) findViewById(R.id.btn_imageClose);
         Button btn_cancel = (Button) findViewById(R.id.btn_delete);
         Button btn_set = (Button)findViewById(R.id.btn_set);
+        Button btn_sett = (Button)findViewById(R.id.btn_sett);
         Button switch1 = (Button)findViewById(R.id.switch1);
         EditText tv_title = (EditText)findViewById(R.id.tv_title);
         EditText tv_text = (EditText)findViewById(R.id.tv_text);
@@ -148,11 +159,74 @@ public class ModifyCapsule extends AppCompatActivity {
             }
         });
 
-        switch1.setOnClickListener(new View.OnClickListener() {
+
+
+
+        /*switch1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CustomSettingLockDialog custom_dlg = new CustomSettingLockDialog(ModifyCapsule.this);
-                custom_dlg.callFunction();
+                custom_dlg.callFunction(main_label, main_label);
+
+            }
+        });*/
+
+        btn_sett.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean isChecked;
+                if(main_label != null) {
+                    Log.d(TAG, main_label.toString());
+                    String sort;
+                    sort = main_label.getText().toString();
+                    Log.d(TAG, sort.toString());
+                    /*String members = sort.substring(sort.length()-1, sort.length());
+                    String members2 = sort.substring(sort.lastIndexOf("/[") +2);
+                    Log.d(TAG, members2.toString());*/
+                    String[] array = sort.split("/");
+                    ArrayList<String> members3;
+                    for(int i =0; i< array.length; i++){
+                        System.out.println(array[i]);
+                    }
+                    String expire = array[0];
+                    System.out.println(expire);
+                    String Member = array[1];
+                    String Member2 = Member.substring(1,Member.length()-1);
+                    /*Member2.substring(1,Member.length()-2);*/
+                    System.out.println(Member2);
+
+                    String[] array2 = Member2.split(", ");
+                    List<String> arrayList = new ArrayList<>();
+
+                    for(int i =0; i< array2.length; i++){
+
+                            arrayList.add(array2[i]);
+                            System.out.println(array2[i]);
+
+                    }
+
+                    int lock_count = arrayList.size();
+                    Log.d(TAG,"members : "+arrayList.toString());
+                    Log.d(TAG,"expire : " + expire.toString());
+                    Log.d(TAG,"F4F Checked : "+lock_count);
+                    Log.d(TAG,"Status_lock :"+status_lock);
+
+                }
+            }
+        });
+
+        Switch switchButton = (Switch) findViewById(R.id.switch1);
+        switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked){
+                    CustomSettingLockDialog custom_dlg = new CustomSettingLockDialog(ModifyCapsule.this);
+                    custom_dlg.callFunction(main_label, main_label);
+                    status_lock = 1;
+                }else{
+                    status_lock = 0;
+                }
             }
         });
 
@@ -175,16 +249,62 @@ public class ModifyCapsule extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                // 이미지 등록
-                String title = Objects.requireNonNull(tv_title.getText()).toString(); // null -> ""
-                String text = Objects.requireNonNull(tv_text.getText()).toString();
-                if (title.equals("")){
-                    Toast.makeText(ModifyCapsule.this,"제목을 입력해주세요.",Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                RequestBody id_body = RequestBody.create(MediaType.parse("text/plain"), Integer.toString(capsule_id));
-                RequestBody title_body = RequestBody.create(MediaType.parse("text/plain"), title);
-                RequestBody text_body = RequestBody.create(MediaType.parse("text/plain"), text);
+                if(main_label != null) {
+
+                    Log.d(TAG, main_label.toString());
+                    String sort;
+                    sort = main_label.getText().toString();
+                    Log.d(TAG, sort.toString());
+                    /*String members = sort.substring(sort.length()-1, sort.length());
+                    String members2 = sort.substring(sort.lastIndexOf("/[") +2);
+                    Log.d(TAG, members2.toString());*/
+                    String[] array = sort.split("/");
+                    ArrayList<String> members3;
+                    for (int i = 0; i < array.length; i++) {
+                        System.out.println(array[i]);
+                    }
+
+                        String expire = array[0];
+                        System.out.println(expire);
+                        String Member = array[1];
+
+                        String Member2 = Member.substring(1, Member.length() - 1);
+                        /*Member2.substring(1,Member.length()-2);*/
+                        System.out.println(Member2);
+
+
+                        String[] array2 = Member2.split(", ");
+                        List<String> arrayList = new ArrayList<>();
+
+
+                        for (int i = 0; i < array2.length; i++) {
+
+                            arrayList.add(array2[i]);
+                            System.out.println(array2[i]);
+
+                        }
+
+                        int lock_count = arrayList.size();
+                        Log.d(TAG, "members : " + arrayList.toString());
+                        Log.d(TAG, "expire : " + expire.toString());
+                        Log.d(TAG, "F4F Checked : " + lock_count);
+                        Log.d(TAG, "Status_lock :" + status_lock);
+
+
+                    // 이미지 등록
+                    String title = Objects.requireNonNull(tv_title.getText()).toString(); // null -> ""
+                    String text = Objects.requireNonNull(tv_text.getText()).toString();
+                    if (title.equals("")) {
+                        Toast.makeText(ModifyCapsule.this, "제목을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    RequestBody id_body = RequestBody.create(MediaType.parse("text/plain"), Integer.toString(capsule_id));
+                    RequestBody title_body = RequestBody.create(MediaType.parse("text/plain"), title);
+                    RequestBody text_body = RequestBody.create(MediaType.parse("text/plain"), text);
+                    RequestBody expire_body = RequestBody.create(MediaType.parse("text/plain"), expire);
+                    RequestBody members_body = RequestBody.create(MediaType.parse("text/plain"), arrayList.toString());
+
+
 
 
 
@@ -195,98 +315,177 @@ public class ModifyCapsule extends AppCompatActivity {
                 MultipartBody.Part part = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
                 */
 
-                // Will need
+                    // Will need
 
-                if( capsule_id != -1 && !EmptyUriListFlag) {
+                    if (capsule_id != -1 && !EmptyUriListFlag) {
 
-                    List<MultipartBody.Part> parts = new ArrayList<>();
-                    for (int i = 0; i < list.size(); i++){
+                        List<MultipartBody.Part> parts = new ArrayList<>();
+                        for (int i = 0; i < list.size(); i++) {
 
-                        String absolutePath = getPath(v.getContext(),list.get(i));
-                        if (absolutePath != null)
-                        {
-                            File file = new File(absolutePath);
-                            String type = getMimeType(file);
-                            RequestBody requestFile = RequestBody.create(MediaType.parse(type), file);
-                            parts.add(MultipartBody.Part.createFormData("file",file.getName(), requestFile));
+                            String absolutePath = getPath(v.getContext(), list.get(i));
+                            if (absolutePath != null) {
+                                File file = new File(absolutePath);
+                                String type = getMimeType(file);
+                                RequestBody requestFile = RequestBody.create(MediaType.parse(type), file);
+                                parts.add(MultipartBody.Part.createFormData("file", file.getName(), requestFile));
+                            }
+                        }
+
+                        if (status_lock == 0) {
+
+                            retrofitInterface.requestPutCapsuleWithImages(id_body, title_body, text_body, parts).enqueue(new Callback<Success>() {
+                                @Override
+                                public void onResponse(Call<Success> call, Response<Success> response) {
+
+                                    if (response.code() == 401) {
+                                        Intent intent = new Intent(getApplicationContext(), login.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
+                                    }
+
+                                    Log.d(TAG, "success with images");
+
+                                    fileDelete(cropUri);
+
+                                    Toast.makeText(ModifyCapsule.this, "캡슐 수정이 완료되었습니다.", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(ModifyCapsule.this, mypage.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.putExtra("user_id", user_id);
+                                    startActivity(intent);
+                                    overridePendingTransition(0,0);
+                                }
+
+                                @Override
+                                public void onFailure(Call<Success> call, Throwable t) {
+                                    Log.d(TAG, "fail");
+
+                                    fileDelete(cropUri);
+                                    list.clear();
+                                    list.add(test);
+                                    EmptyUriListFlag = true;
+                                    ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(v.getContext(), list, 1, tabLayout);
+                                    viewPager.setAdapter(viewPagerAdapter);
+                                    btn_imageClose.setVisibility(View.GONE);
+
+                                    Toast.makeText(ModifyCapsule.this, "캡슐 내용을 수정해주세요", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else if (status_lock == 1) {
+                            retrofitInterface.requestPutLockCapsuleWithImages(id_body, title_body, text_body, expire_body, members_body, parts).enqueue(new Callback<Success>() {
+                                @Override
+                                public void onResponse(Call<Success> call, Response<Success> response) {
+
+                                    if (response.code() == 401) {
+                                        Intent intent = new Intent(getApplicationContext(), login.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
+                                    }
+
+                                    Log.d(TAG, "success with images");
+
+                                    fileDelete(cropUri);
+
+                                    Toast.makeText(ModifyCapsule.this, "잠금 캡슐이 완료되었습니다.", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(ModifyCapsule.this, mypage.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.putExtra("user_id", user_id);
+                                    startActivity(intent);
+                                    overridePendingTransition(0,0);
+                                }
+
+                                @Override
+                                public void onFailure(Call<Success> call, Throwable t) {
+                                    Log.d(TAG, "fail");
+
+                                    fileDelete(cropUri);
+                                    list.clear();
+                                    list.add(test);
+                                    EmptyUriListFlag = true;
+                                    ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(v.getContext(), list, 1, tabLayout);
+                                    viewPager.setAdapter(viewPagerAdapter);
+                                    btn_imageClose.setVisibility(View.GONE);
+
+                                    Toast.makeText(ModifyCapsule.this, "캡슐 내용을 수정해주세요", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        }
+                    } else if (capsule_id != -1 && EmptyUriListFlag) {
+                        if (status_lock == 0) {
+                            retrofitInterface.requestPutCapsule(capsule_id, title, text).enqueue(new Callback<Success>() {
+                                @Override
+                                public void onResponse(Call<Success> call, Response<Success> response) {
+
+                                    if (response.code() == 401) {
+                                        Intent intent = new Intent(getApplicationContext(), login.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
+                                    }
+
+                                    Toast.makeText(ModifyCapsule.this, "캡슐 수정이 완료되었습니다.", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(ModifyCapsule.this, mypage.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.putExtra("user_id", user_id);
+                                    startActivity(intent);
+                                    overridePendingTransition(0,0);
+                                }
+
+                                @Override
+                                public void onFailure(Call<Success> call, Throwable t) {
+                                    Log.d(TAG, "fail");
+                                    Toast.makeText(ModifyCapsule.this, "캡슐 내용을 수정해주세요", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+
+                        } else if (status_lock == 1) {
+
+                            retrofitInterface.requestPutLockCapsule(capsule_id, title, text, expire, arrayList).enqueue(new Callback<Success>() {
+                                @Override
+                                public void onResponse(Call<Success> call, Response<Success> response) {
+
+                                    if (response.code() == 401) {
+                                        Intent intent = new Intent(getApplicationContext(), login.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
+                                    }
+
+                                    Toast.makeText(ModifyCapsule.this, "잠금 캡슐이 생성되었습니다.", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(ModifyCapsule.this, mypage.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    intent.putExtra("user_id", user_id);
+                                    startActivity(intent);
+                                    overridePendingTransition(0,0);
+                                }
+
+                                @Override
+                                public void onFailure(Call<Success> call, Throwable t) {
+                                    Log.d(TAG, "fail");
+                                    Toast.makeText(ModifyCapsule.this, "캡슐 내용을 수정해주세요", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                        } else {
+                            Toast.makeText(ModifyCapsule.this, "잘못된 캡슐 ID", Toast.LENGTH_SHORT).show();
                         }
                     }
 
-                    retrofitInterface.requestPutCapsuleWithImages(id_body, title_body, text_body, parts).enqueue(new Callback<Success>() {
-                        @Override
-                        public void onResponse(Call<Success> call, Response<Success> response) {
 
-                            if (response.code() == 401) {
-                                Intent intent = new Intent(getApplicationContext(), login.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                            }
-
-                            Log.d(TAG,"success with images");
-
-                            fileDelete(cropUri);
-
-                            Toast.makeText(ModifyCapsule.this,"캡슐 수정이 완료되었습니다.",Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(ModifyCapsule.this, mypage.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra("user_id",user_id);
-                            startActivity(intent);
-
-                        }
-
-                        @Override
-                        public void onFailure(Call<Success> call, Throwable t) {
-                            Log.d(TAG,"fail");
-
-                            fileDelete(cropUri);
-                            list.clear();
-                            list.add(test);
-                            EmptyUriListFlag = true;
-                            ViewPagerAdapter viewPagerAdapter = new ViewPagerAdapter(v.getContext(), list, 1, tabLayout);
-                            viewPager.setAdapter(viewPagerAdapter);
-                            btn_imageClose.setVisibility(View.GONE);
-
-                            Toast.makeText(ModifyCapsule.this,"캡슐 내용을 수정해주세요",Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else if ( capsule_id != -1 && EmptyUriListFlag) {
-                    retrofitInterface.requestPutCapsule(capsule_id, title, text).enqueue(new Callback<Success>() {
-                        @Override
-                        public void onResponse(Call<Success> call, Response<Success> response) {
-
-                            if (response.code() == 401) {
-                                Intent intent = new Intent(getApplicationContext(), login.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                startActivity(intent);
-                            }
-
-                            Toast.makeText(ModifyCapsule.this,"캡슐 수정이 완료되었습니다.",Toast.LENGTH_SHORT).show();
-                            Intent intent = new Intent(ModifyCapsule.this, mypage.class);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                            intent.putExtra("user_id",user_id);
-                            startActivity(intent);
-                        }
-
-                        @Override
-                        public void onFailure(Call<Success> call, Throwable t) {
-                            Log.d(TAG,"fail");
-                            Toast.makeText(ModifyCapsule.this,"캡슐 내용을 수정해주세요",Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                } else {
-                    Toast.makeText(ModifyCapsule.this,"잘못된 캡슐 ID",Toast.LENGTH_SHORT).show();
                 }
-
 
 
 
             }
         });
+
     }
+
 
     private void fileDelete(Uri uri) {
         File fDelete;
@@ -624,6 +823,7 @@ public class ModifyCapsule extends AppCompatActivity {
             }
         }
     }
+
 
 
     @Override

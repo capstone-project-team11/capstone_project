@@ -44,6 +44,7 @@ public class followpage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_followpage);
 
+
         Intent intent = getIntent();
         user = intent.getParcelableExtra("user");
         nick_name = intent.getStringExtra("nick_name");
@@ -77,7 +78,7 @@ public class followpage extends AppCompatActivity {
                         Log.d(TAG, nick_name.toString() + first_name.toString() + last_name.toString() + image_url.toString());
 
 
-                        Follow follow = new Follow(image_url,nick_name,last_name+first_name);
+                        Follow follow = new Follow(image_url,nick_name,last_name+first_name,0);
                         arrayList.add(follow);
                         followLogAdapter.notifyDataSetChanged(); // redirect
 

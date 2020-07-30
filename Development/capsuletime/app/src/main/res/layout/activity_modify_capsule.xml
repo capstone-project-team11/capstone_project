@@ -126,14 +126,17 @@
         android:layout_width="match_parent"
         android:layout_height="230dp"
         android:layout_marginTop="5dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/const_vp">
+        app:layout_constraintTop_toBottomOf="@+id/const_vp"
+        app:layout_constraintVertical_bias="0.0">
 
-        <EditText
+        <!--<EditText
             android:id="@+id/tv_title"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
+            android:layout_width="368dp"
+            android:layout_height="31dp"
             android:layout_marginStart="60dp"
             android:layout_marginLeft="60dp"
             android:layout_marginEnd="1dp"
@@ -149,12 +152,36 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.146" />
+            app:layout_constraintVertical_bias="0.144" />-->
+
+        <EditText
+            android:id="@+id/tv_title"
+            android:layout_width="257dp"
+            android:layout_height="61dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginLeft="60dp"
+            android:layout_marginTop="52dp"
+            android:layout_marginEnd="1dp"
+            android:layout_marginRight="1dp"
+            android:background="@android:color/transparent"
+            android:hint="Text"
+            android:inputType="textMultiLine"
+            android:lines="6"
+            android:maxLines="6"
+            android:textColor="@color/colorPrimaryDark"
+            android:textColorHint="#4F000000"
+            android:textSize="8pt"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.182"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tv_title"
+            app:layout_constraintVertical_bias="0.0" />
 
         <EditText
             android:id="@+id/tv_text"
-            android:layout_width="350dp"
-            android:layout_height="wrap_content"
+            android:layout_width="332dp"
+            android:layout_height="142dp"
             android:layout_marginStart="60dp"
             android:layout_marginLeft="60dp"
             android:layout_marginTop="52dp"
@@ -190,5 +217,46 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout8"
         app:layout_constraintVertical_bias="0.148" />
+
+    <TextView
+        android:id="@+id/date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.977" />
+
+    <TextView
+        android:id="@+id/members"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.954"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.925" />
+
+    <Button
+        android:id="@+id/btn_sett"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:background="@android:color/transparent"
+        android:text="완료"
+        android:textColor="#AF0027FF"
+        android:textSize="18dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.955"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.855" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
@@ -53,6 +54,8 @@ import com.google.android.material.bottomnavigation.LabelVisibilityMode;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
+import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -383,7 +386,8 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
     }
     private void setUpCapsulesOnMap() {
         //mMap.clear();
-
+        final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+        String location = "Default";
         List<Capsule> capsules = capsuleList;
         Log.i(TAG, "캡슐 정보 " + capsules);
         int idCount = 0;
@@ -399,7 +403,28 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
 
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(latLng);
-            markerOptions.title(capsules.get(i).getUser_id());
+
+            try {
+                DecimalFormat df = new DecimalFormat();
+                df.setMaximumFractionDigits(3);
+                double lat = Double.parseDouble(df.format(capsules.get(i).getLat()));
+                double lng = Double.parseDouble(df.format(capsules.get(i).getLng()));
+
+                List<Address> list = geocoder.getFromLocation(lat, lng, 3);
+                if (list != null) {
+                    if (list.size() == 0){
+                        // no
+                    } else {
+                        location = list.get(0).getAddressLine(0);
+                        Log.d(TAG, "location good");
+                    }
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+            markerOptions.title(location);
             //markerOptions.snippet(capsules.get(i).getCapsule_id());
 
             Log.d(TAG, markerOptions.getTitle());
@@ -445,9 +470,7 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
     @Override
     public boolean onMarkerClick(Marker marker) {
         if (!marker.getId().equals(curMarker.getId())) {
-            Intent intent = new Intent(getApplicationContext(), PopUpActivity.class);
-            intent.putExtra("user_id",marker.getTitle());
-            startActivityForResult(intent, 1);
+
             return false;
         } else {
 

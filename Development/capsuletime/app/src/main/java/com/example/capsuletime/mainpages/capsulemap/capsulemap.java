@@ -377,7 +377,7 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
     public boolean onMarkerClick(Marker marker) {
         if (!marker.getId().equals(curMarker.getId())) {
             Intent intent = new Intent(getApplicationContext(), PopUpActivity.class);
-            intent.putExtra("nick_name",marker.getTitle());
+            intent.putExtra("nick_name2",marker.getTitle());
             startActivityForResult(intent, 1);
             return false;
         } else {

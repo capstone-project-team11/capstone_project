@@ -48,11 +48,29 @@ data class CapsuleLogData (
         val iv_url: String,
         val tv_title: String,
         val tv_text: String?,
+        val likes: Int,
         val tv_tags: String,
         val tv_created_date: String,
         val tv_opened_date: String,
         val tv_location: String,
         val state_temp: Int,
+        val status_lock: Int,
+        val contentList: List<Content>?
+)
+
+data class CapsuleLogData2 (
+        val user_id: String,
+        val capsule_id: Int,
+        val d_day: String,
+        val iv_url: String,
+        val tv_title: String,
+        val tv_text: String?,
+        val tv_tags: String,
+        val tv_created_date: String,
+        val tv_opened_date: String,
+        val tv_location: String,
+        val state_temp: Int,
+        val status_lock: Int,
         val contentList: List<Content>?
 )
 
@@ -80,7 +98,8 @@ data class FollowLogData (
         val nick_name: String,
         val first_name: String,
         val last_name: String?,
-        val iv_url: String
+        val iv_url: String,
+        val status_follow: Int
 )
 
 data class User(

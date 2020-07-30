@@ -16,6 +16,7 @@ import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.User;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import retrofit2.Call;
@@ -62,19 +63,44 @@ public class followerpage extends AppCompatActivity {
                 Log.d(TAG, userList.toString());
                 if (userList != null) {
                     for (User user : userList) {
-                        String nick_name = user.getNick_name();
+                        String nick_name2 = user.getNick_name();
                         String first_name = user.getFirst_name();
                         String last_name = user.getLast_name();
                         String image_url = user.getImage_url();
 
 
-                        Log.d(TAG, nick_name.toString() + first_name.toString() + last_name.toString() + image_url.toString());
+                        retrofitInterface.requestFollow(inStr).enqueue(new Callback<List<User>>() {
+                            @Override
+                            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                                userList = response.body();
+
+                                Log.d(TAG, userList.toString());
+                                if (userList != null) {
+                                    for (User user : userList) {
+                                        String nick_name3 = user.getNick_name();
+
+                                        if(nick_name2.equals(nick_name3)) {
+                                            Follow follow = new Follow(image_url, nick_name2, last_name + first_name, 0);
+                                            arrayList.add(follow);
+                                            followLogAdapter.notifyDataSetChanged(); // redirect
+
+                                        }
+                                    }
+
+                                }
+
+                            }
 
 
-                        Follow follow = new Follow(image_url,nick_name,last_name+first_name);
+                            @Override
+                            public void onFailure(Call<List<User>> call, Throwable t) {
+
+                            }
+                        });
+
+                        Follow follow = new Follow(image_url, nick_name2, last_name + first_name, 1);
                         arrayList.add(follow);
                         followLogAdapter.notifyDataSetChanged(); // redirect
-
                     }
                 }
             }

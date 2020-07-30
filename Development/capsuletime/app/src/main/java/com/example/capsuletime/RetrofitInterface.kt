@@ -16,6 +16,12 @@ interface RetrofitInterface {
     ) : Call<Logined>
 
     @FormUrlEncoded// form url encode
+    @POST("/users/logout") // url
+    fun requestLogout(
+            @Field("nick_name") nick_name: String
+    ) : Call<Success>
+
+    @FormUrlEncoded// form url encode
     @POST("/users/") // url
     fun requestPostUser(
             // input definition
@@ -49,6 +55,19 @@ interface RetrofitInterface {
             @Path("capsule_id") capsule_id: Int
     ): Call<Success>
 
+    @DELETE("/follow")
+    fun requestDeleteFollow(
+            @Query("nick_name") nick_name: String,
+            @Query("dest_nick_name") dest_nick_name: String
+    ): Call<Success>
+
+    @FormUrlEncoded
+    @POST("/follow")
+    fun requestCreateFollow(
+            @Field("nick_name") nick_name: String,
+            @Field("dest_nick_name") dest_nick_name: String
+    ): Call<Success>
+
     @Multipart
     @PUT ("/capsules/with/images")
     fun requestPutCapsuleWithImages(
@@ -67,6 +86,29 @@ interface RetrofitInterface {
             @Field("text") text: String
     ) : Call<Success>
 
+    @FormUrlEncoded
+    @PUT ("/capsules/lock")
+    fun requestPutLockCapsule(
+            // input definition
+            @Field("capsule_id") capsule_id: Int,
+            @Field("title") title: String,
+            @Field("text") text: String,
+            @Field("expire") expire: String,
+            @Field("members") members: List<String>?
+    ) : Call<Success>
+
+    @Multipart
+    @PUT ("/capsules/lock/images")
+    fun requestPutLockCapsuleWithImages(
+            @Part("capsule_id") capsule_id: RequestBody,
+            @Part("title") title: RequestBody,
+            @Part("text") text: RequestBody,
+            @Part("expire") expire: RequestBody,
+            @Part("members") members: RequestBody,
+            @Part file: List<MultipartBody.Part>
+    ) : Call<Success>
+
+
     @GET ("/users/{user_id}")
     fun requestUserData (
             @Path("user_id") user_id: String
@@ -76,6 +118,7 @@ interface RetrofitInterface {
     fun requestSearchUser(
             @Path("nick_name") nick_name: String
     ):Call <User>
+
 
     @GET("/capsules/nick/{nick_name}")
     fun requestSearchUserNick(

@@ -1,56 +1,45 @@
-package com.example.capsuletime.mainpages.mypage;
+package com.example.capsuletime.mainpages.userpage;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.view.menu.MenuView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.capsuletime.CapsuleLogData;
 import com.example.capsuletime.R;
-import com.example.capsuletime.RetrofitClient;
-import com.example.capsuletime.RetrofitInterface;
-import com.example.capsuletime.Success;
 import com.example.capsuletime.User;
+import com.example.capsuletime.mainpages.mypage.ModifyCapsule;
 import com.example.capsuletime.mainpages.mypage.dialogs.ViewCapsuleDialog;
-import com.google.android.gms.common.server.converter.StringToIntConverter;;
 
 import java.util.ArrayList;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+;
 
 
-public class CapsuleLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class UserCapsuleLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private ArrayList<CapsuleLogData> arrayList;
     private Context context;
     private static final String TAG = "CapsuleLogAdapter";
-    private ViewCapsuleDialog viewCapsuleDialog;
-    private CapsuleLogAdapter capsuleLogAdapter;
+    private ViewUserCapsuleDialog viewUserCapsuleDialog;
+    private UserCapsuleLogAdapter userCapsuleLogAdapter;
     private User user;
-    private RetrofitInterface retrofitInterface;
     //private modify modifyCapsule
     //private
 
-    public CapsuleLogAdapter(ArrayList<CapsuleLogData> arrayList, Context context) {
+    public UserCapsuleLogAdapter(ArrayList<CapsuleLogData> arrayList, Context context) {
         this.arrayList = arrayList;
         this.context = context;
-        this.capsuleLogAdapter = this;
+        this.userCapsuleLogAdapter = this;
     }
 
 
@@ -58,14 +47,13 @@ public class CapsuleLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
-
-        int position;
+        int position ;
 
 
         if (viewType == 0) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_capsule_log,parent,false);
             return new CapsuleViewHolder(view);
-            /*if(arrayList.get().getStatus_lock() == 1 ){
+            /*if(arrayList.get(position).getStatus_lock() == 1 ){
                 view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_capsule_lock_log,parent,false);
                 return new LockCapsuleViewHolder(view);
             }*/
@@ -121,8 +109,8 @@ public class CapsuleLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                         intent.putExtra("user", user);
                         String curName = ((CapsuleViewHolder) holder).tv_title.getText().toString();
                         //Toast.makeText(v.getContext(), curName, Toast.LENGTH_SHORT).show();
-                        viewCapsuleDialog = new ViewCapsuleDialog(context, arrayList.get(position), capsuleLogAdapter, position);
-                        viewCapsuleDialog.call();
+                        viewUserCapsuleDialog = new ViewUserCapsuleDialog(context, arrayList.get(position), userCapsuleLogAdapter, position);
+                        viewUserCapsuleDialog.call();
                     }
                 });
             /*if (arrayList.get(position).getStatus_lock() == 1) {
@@ -159,49 +147,6 @@ public class CapsuleLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
                     v.getContext().startActivity(intent);
 
                     //remove(((TempCapsuleViewHolder) holder).getAdapterPosition());
-                }
-            });
-            RetrofitClient retrofitClient = new RetrofitClient(context);
-            retrofitInterface = retrofitClient.retrofitInterface;
-
-            ((TempCapsuleViewHolder) holder).iv_thumb.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // delete 통신
-                    // if 문으로 재확인 구문 필요
-                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which){
-                                case DialogInterface.BUTTON_POSITIVE: {
-                                    // server 에서 delete 시
-                                    retrofitInterface.requestDeleteCapsule(arrayList.get(position).getCapsule_id()).enqueue(new Callback<Success>() {
-                                        @Override
-                                        public void onResponse(Call<Success> call, Response<Success> response) {
-                                            capsuleLogAdapter.remove(position);
-                                            capsuleLogAdapter.notifyDataSetChanged();
-                                        }
-
-                                        @Override
-                                        public void onFailure(Call<Success> call, Throwable t) {
-                                            Toast.makeText(v.getContext(), "삭제를 실패했습니다.",Toast.LENGTH_SHORT).show();
-                                        }
-                                    });
-                                    break;
-                                }
-
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    break;
-                            }
-                        }
-                    };
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
-                            .setNegativeButton("No", dialogClickListener).show();
-
-
-
                 }
             });
         }
@@ -260,7 +205,6 @@ public class CapsuleLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         //protected TextView tv_opened_date;
         //protected TextView tv_created_date;
         protected ConstraintLayout cl_capsule;
-        protected ImageView iv_thumb;
 
         public TempCapsuleViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -269,7 +213,6 @@ public class CapsuleLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             //this.tv_opened_date = (TextView) itemView.findViewById(R.id.tv_opened_date);
             //this.tv_created_date = (TextView) itemView.findViewById(R.id.tv_created_date);
             this.cl_capsule = (ConstraintLayout) itemView.findViewById(R.id.cl_capsule);
-            this.iv_thumb = (ImageView) itemView.findViewById(R.id.btn_delete);
 
         }
     }

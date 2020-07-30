@@ -53,6 +53,7 @@ import com.example.capsuletime.mainpages.followpage.FollowLogAdapter;
 import com.example.capsuletime.mainpages.followpage.followpage;
 import com.example.capsuletime.mainpages.mypage.CustomSettingDialog;
 import com.example.capsuletime.mainpages.mypage.mypage;
+import com.example.capsuletime.mainpages.mypage.mypage_map;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 import com.theartofdev.edmodo.cropper.CropImage;
@@ -113,6 +114,7 @@ public class settingpage extends AppCompatActivity {
 
         CardView cv_upload_picture = (CardView) this.findViewById(R.id.btn_UploadPicture);
         Button btn_finish = (Button) this.findViewById(R.id.button7);
+        Button btn_logout = (Button) this.findViewById(R.id.logout);
 
         RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
@@ -259,6 +261,38 @@ public class settingpage extends AppCompatActivity {
 
                 CustomSettingDialog custom_dlg = new CustomSettingDialog(settingpage.this);
                 custom_dlg.callFunction();
+            }
+        });
+
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                Call<Success> call = retrofitInterface.requestLogout(nick_name);
+
+                call.enqueue(new Callback<Success>() {
+                    @Override
+                    public void onResponse(Call<Success> call, Response<Success> response) {
+                        if (response.code() == 401) {
+                            Intent intent = new Intent(getApplicationContext(), login.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(intent);
+                        }
+
+                        Intent intent = new Intent(getApplicationContext(), login.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                        overridePendingTransition(0,0);
+                        //
+                    }
+
+                    @Override
+                    public void onFailure(Call<Success> call, Throwable t) {
+
+                    }
+                });
             }
         });
     }

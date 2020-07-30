@@ -7,7 +7,8 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
+
+import java.util.TreeSet;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -18,10 +19,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -31,19 +30,13 @@ import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.User;
 import com.example.capsuletime.core.preferences.LockNickNameSharedPreferences;
 import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
-import com.example.capsuletime.mainpages.followpage.Follow;
-import com.example.capsuletime.mainpages.followpage.FollowLogAdapter;
-import com.example.capsuletime.mainpages.followpage.followpage;
-import com.example.capsuletime.mainpages.mypage.CustomSettingDialog;
 
-import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-import java.util.TreeSet;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -57,13 +50,14 @@ public class CustomSettingLockDialog {
     private String lock_nick_name;
     private RetrofitInterface retrofitInterface;
     private ArrayList<Locked_Capsule> arrayList;
-    private TreeSet<String> result;
     private SettingFriendLogAdapter settingFriendLogAdapter;
     private List<User> userList;
     private static final String TAG = "Setting_Lock_Capsule";
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
     boolean isChecked;
+    private TreeSet<String> result;
+
     private CheckBox checkBox;
     private TextView textView_Date;
     private DatePickerDialog.OnDateSetListener callbackMethod;
@@ -84,7 +78,7 @@ public class CustomSettingLockDialog {
     }
 
 
-    public void callFunction() {
+    public void callFunction(TextView mainLabel, TextView main_label) {
 
         final Dialog dlg = new Dialog(context);
 
@@ -142,8 +136,10 @@ public class CustomSettingLockDialog {
         settingFriendLogAdapter = new SettingFriendLogAdapter(arrayList, result, context);
         recyclerView.setAdapter(settingFriendLogAdapter);
 
+
         RetrofitClient retrofitClient = new RetrofitClient(dlg.getContext());
         retrofitInterface = retrofitClient.retrofitInterface;
+
 
         String inStr = (nick_name != null) ? nick_name : user.getNick_name();
         retrofitInterface.requestFollower(inStr).enqueue(new Callback<List<User>>() {
@@ -167,12 +163,17 @@ public class CustomSettingLockDialog {
                                     for (User user : userList) {
                                         String nick_name3 = user.getNick_name();
 
+
                                         if(inStr.equals(nick_name3)) {
                                             Log.d(TAG, nick_name.toString() + first_name.toString() + last_name.toString() + image_url.toString() + isChecked);
+
+
                                             Locked_Capsule locked = new Locked_Capsule(image_url, nick_name2, last_name + first_name, isChecked);
                                             arrayList.add(locked);
                                             settingFriendLogAdapter.notifyDataSetChanged(); // redirect
                                         }
+
+
                                     }
                                 }
                             }
@@ -213,7 +214,27 @@ public class CustomSettingLockDialog {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
                         month++;
-                        et_Date.setText(year + "월 " + month + "월 " + dayOfMonth + "일");
+                        if(month < 10) {
+                            String month2;
+                            month2 = "0" + month;
+                            if(dayOfMonth < 10){
+                                String day;
+                                day = "0" + dayOfMonth;
+                                et_Date.setText(year + "-" + month2 + "-" + day);
+                            } else if(dayOfMonth > 10){
+                                et_Date.setText(year + "-" + month2 + "-" + dayOfMonth);
+                            }
+
+                        } else if(month >= 10){
+                            if(dayOfMonth < 10){
+                                String day;
+                                day = "0" + dayOfMonth;
+                                et_Date.setText(year + "-" + month + "-" + day);
+                            } else if(dayOfMonth > 10){
+                                et_Date.setText(year + "-" + month + "-" + dayOfMonth);
+                            }
+                        }
+
                     }
                 }, year,month,dayofmonth);
                 mDatePicker.setTitle("Select Date");
@@ -238,12 +259,30 @@ public class CustomSettingLockDialog {
                     public void onTimeSet(TimePicker timePicker, int selectedHour, int selectedMinute) {
                         String state = "AM";
                         // 선택한 시간이 12를 넘을경우 "PM"으로 변경 및 -12시간하여 출력 (ex : PM 6시 30분)
-                        if (selectedHour > 12) {
+                        /*if (selectedHour > 12) {
                             selectedHour -= 12;
                             state = "PM";
-                        }
+                        }*/
                         // EditText에 출력할 형식 지정
-                        et_time.setText(state + " " + selectedHour + "시 " + selectedMinute + "분");
+
+                        if(selectedHour < 10){
+                            String hour = "0"+selectedHour;
+                            if(selectedMinute < 10){
+                                String minute = "0"+selectedMinute;
+                                et_time.setText( hour + ":" + minute  );
+                            } else if(selectedMinute > 10){
+                                et_time.setText( hour + ":" + selectedMinute  );
+                            }
+                        } else if(selectedHour >= 10){
+                            if(selectedMinute < 10){
+                                String minute = "0"+selectedMinute;
+                                et_time.setText( selectedHour + ":" + minute  );
+                            } else if(selectedMinute > 10){
+                                et_time.setText( selectedHour + ":" + selectedMinute  );
+                            }
+
+                        }
+
                     }
                 }, hour, minute, false); // true의 경우 24시간 형식의 TimePicker 출현
                 mTimePicker.setTitle("Select Time");
@@ -257,7 +296,9 @@ public class CustomSettingLockDialog {
             @Override
             public void onClick(View view) {
 
-                Log.d(TAG, et_Date.getText().toString() + et_time.getText().toString()+" " + lock_nick_name);
+                Log.d(TAG, et_Date.getText().toString() +" " + et_time.getText().toString()+":10 " + "" + result);
+                main_label.setText(et_Date.getText().toString() +" " + et_time.getText().toString()+":10" + "/" + result);
+                dlg.dismiss();
 
             }
         });
@@ -265,12 +306,13 @@ public class CustomSettingLockDialog {
     }
 
     private void updateLabel(View v) {
-        String myFormat = "yyyy/MM/dd";    // 출력형식   2018/11/28
+        String myFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";    // 출력형식   2018/11/28
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.KOREA);
 
 
         EditText et_date = (EditText) v.findViewById(R.id.Date);
         et_date.setText(sdf.format(myCalendar.getTime()));
+        Log.d(TAG,et_date.toString());
 
     }
 

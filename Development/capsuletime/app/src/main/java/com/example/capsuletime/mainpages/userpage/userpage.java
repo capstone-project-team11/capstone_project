@@ -58,7 +58,7 @@ public class userpage extends AppCompatActivity {
     private String user_id;
     private String nick_name;
     private ArrayList<CapsuleLogData> arrayList;
-    private CapsuleLogAdapter capsuleLogAdapter;
+    private UserCapsuleLogAdapter userCapsuleLogAdapter;
     private RecyclerView recyclerView;
     private LinearLayoutManager linearLayoutManager;
     private RetrofitInterface retrofitInterface;
@@ -94,8 +94,8 @@ public class userpage extends AppCompatActivity {
         recyclerView.setLayoutManager(linearLayoutManager);
 
         arrayList = new ArrayList<>();
-        capsuleLogAdapter = new CapsuleLogAdapter(arrayList,this);
-        recyclerView.setAdapter(capsuleLogAdapter);
+        userCapsuleLogAdapter = new UserCapsuleLogAdapter(arrayList,this);
+        recyclerView.setAdapter(userCapsuleLogAdapter);
 
         iv_user.setImageResource(R.drawable.user);
 
@@ -163,6 +163,7 @@ public class userpage extends AppCompatActivity {
                         for (Capsule capsule : capsuleList) {
                             int state_temp = capsule.getStatus_temp();
                             int capsule_id = capsule.getCapsule_id();
+                            int state_lock = capsule.getStatus_lock();
                             String title = capsule.getTitle() != null ? capsule.getTitle() : "";
                             String url = capsule.getContent().size() != 0 ?
                                     capsule.getContent().get(0).getUrl() : Integer.toString(R.drawable.capsule_marker_angry);
@@ -172,6 +173,7 @@ public class userpage extends AppCompatActivity {
                             String location = "Default";
                             String d_day = "0";
                             String text = capsule.getText();
+                            int likes = capsule.getLikes();
                             // UTC Time control
 
 
@@ -224,10 +226,10 @@ public class userpage extends AppCompatActivity {
                             Log.d(TAG,url+" "+title+" "+created_date+" "+opened_date+" "+location+" "+state_temp);
 
                             CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, d_day,
-                                    url, title, text, "#절친 #평생친구", created_date,
-                                    opened_date, location, state_temp, contentList);
+                                    url, title, text,likes, "#절친 #평생친구", created_date,
+                                    opened_date, location, state_temp, state_lock, contentList);
                             arrayList.add(capsuleLogData);
-                            capsuleLogAdapter.notifyDataSetChanged(); // redirect
+                            userCapsuleLogAdapter.notifyDataSetChanged(); // redirect
                         }
                     }
                 }

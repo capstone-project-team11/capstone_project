@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import java.util.TreeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +26,6 @@ import com.example.capsuletime.mainpages.userpage.userpage;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.TreeSet;
 
 ;
 
@@ -59,6 +59,8 @@ public class SettingFriendLogAdapter extends RecyclerView.Adapter<SettingFriendL
         return holder;
     }
 
+
+
     @Override
     public void onBindViewHolder(@NonNull FolloewLogAdapter holder, int position) {
 
@@ -69,6 +71,8 @@ public class SettingFriendLogAdapter extends RecyclerView.Adapter<SettingFriendL
         holder.tv_nick.setText(arrayList.get(position).getNick_name());
         holder.tv_name.setText(arrayList.get(position).getName());
         holder.chkSelected.setSelected(arrayList.get(position).isSelected());
+
+
 
         holder.chkSelected.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -82,18 +86,28 @@ public class SettingFriendLogAdapter extends RecyclerView.Adapter<SettingFriendL
                     }
                     Log.d(TAG, result.toString());
                 }
-            }
+                    }
+
+
         });
+
+
+
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if(holder.chkSelected.isChecked()){
                     holder.chkSelected.setChecked(holder.chkSelected.isChecked());
                 } else {
                     holder.chkSelected.setChecked(holder.chkSelected.isChecked());
                 }
+
+
             }
         });
+
+
     }
 
     @Override

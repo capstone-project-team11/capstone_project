@@ -50,6 +50,7 @@
         <activity android:name=".mainpages.followpage.followpage" />
         <activity android:name=".mainpages.followpage.followerpage" />
 
+
         <activity android:name="com.example.capsuletime.mainpages.ar.UnityPlayerActivity"
             android:screenOrientation="portrait"
             android:launchMode="singleTask"
