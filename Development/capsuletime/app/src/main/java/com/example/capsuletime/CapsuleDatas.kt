@@ -159,7 +159,7 @@ data class Setting(
         var new_nick_name: String
 )
 
-data class cap (
+data class CapsuleOneOfAll (
         var capsule_id: Int,
         var user_id: String,
         var nick_name: String,
@@ -171,5 +171,6 @@ data class cap (
         var date_opened: String,
         var status_temp: Int,
         var lat: Double,
-        var lng: Double
+        var lng: Double,
+        var status_lock: Int
 )

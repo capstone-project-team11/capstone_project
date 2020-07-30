@@ -274,20 +274,17 @@ public class ModifyCapsule extends AppCompatActivity {
 
 
                         String[] array2 = Member2.split(", ");
-                        List<String> arrayList = new ArrayList<>();
-
+                        List<String> members = new ArrayList<>();
 
                         for (int i = 0; i < array2.length; i++) {
 
-                            arrayList.add(array2[i]);
+                            members.add(array2[i]);
                             System.out.println(array2[i]);
-
                         }
-
-                        int lock_count = arrayList.size();
-                        Log.d(TAG, "members : " + arrayList.toString());
+                        //int lock_count = arrayList.size();
+                        //Log.d(TAG, "members : " + arrayList.toString());
                         Log.d(TAG, "expire : " + expire.toString());
-                        Log.d(TAG, "F4F Checked : " + lock_count);
+                        //Log.d(TAG, "F4F Checked : " + lock_count);
                         Log.d(TAG, "Status_lock :" + status_lock);
 
 
@@ -302,11 +299,7 @@ public class ModifyCapsule extends AppCompatActivity {
                     RequestBody title_body = RequestBody.create(MediaType.parse("text/plain"), title);
                     RequestBody text_body = RequestBody.create(MediaType.parse("text/plain"), text);
                     RequestBody expire_body = RequestBody.create(MediaType.parse("text/plain"), expire);
-                    RequestBody members_body = RequestBody.create(MediaType.parse("text/plain"), arrayList.toString());
-
-
-
-
+                    //RequestBody members_body = RequestBody.create(MediaType.parse("text/plain"), arrayList.toString());
 
                 /*
                 File file = new File("/storage/emulated/0/Download/google.jpg");
@@ -373,7 +366,7 @@ public class ModifyCapsule extends AppCompatActivity {
                                 }
                             });
                         } else if (status_lock == 1) {
-                            retrofitInterface.requestPutLockCapsuleWithImages(id_body, title_body, text_body, expire_body, members_body, parts).enqueue(new Callback<Success>() {
+                            retrofitInterface.requestPutLockCapsuleWithImages(id_body, title_body, text_body, expire_body, members, parts).enqueue(new Callback<Success>() {
                                 @Override
                                 public void onResponse(Call<Success> call, Response<Success> response) {
 
@@ -445,7 +438,7 @@ public class ModifyCapsule extends AppCompatActivity {
 
                         } else if (status_lock == 1) {
 
-                            retrofitInterface.requestPutLockCapsule(capsule_id, title, text, expire, arrayList).enqueue(new Callback<Success>() {
+                            retrofitInterface.requestPutLockCapsule(capsule_id, title, text, expire, members).enqueue(new Callback<Success>() {
                                 @Override
                                 public void onResponse(Call<Success> call, Response<Success> response) {
 

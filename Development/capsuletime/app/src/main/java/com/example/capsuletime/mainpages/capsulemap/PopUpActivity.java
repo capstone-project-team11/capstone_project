@@ -1,13 +1,9 @@
 package com.example.capsuletime.mainpages.capsulemap;
 
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,7 +20,6 @@ import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.Success;
 import com.example.capsuletime.User;
 import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
-import com.example.capsuletime.mainpages.followpage.Follow;
 import com.example.capsuletime.mainpages.userpage.userpage;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -143,9 +138,9 @@ public class PopUpActivity extends AppCompatActivity {
         }
 
 
-        TextView tv_user_id = (TextView)findViewById(R.id.tv_user_id);
+        TextView tv_nick_name = (TextView)findViewById(R.id.tv_nick_name);
         TextView tv_name = (TextView)findViewById(R.id.tv_name);
-        tv_user_id.setText(user.getUser_id());
+        tv_nick_name.setText(user.getNick_name());
         String name = user.getLast_name() + user.getFirst_name();
         tv_name.setText(name);
 

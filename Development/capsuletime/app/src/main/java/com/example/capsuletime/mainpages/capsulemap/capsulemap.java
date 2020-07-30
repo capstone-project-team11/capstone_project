@@ -17,6 +17,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -24,14 +28,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.example.capsuletime.CapsuleOneOfAll;
 import com.example.capsuletime.R;
 import com.example.capsuletime.RetrofitClient;
 import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.User;
-import com.example.capsuletime.cap;
 import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
 import com.example.capsuletime.login.login;
-import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
 import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
 import com.example.capsuletime.mainpages.mypage.mypage;
 import com.example.capsuletime.mainpages.searchpage.searchpage;
@@ -41,13 +44,18 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
+import com.google.maps.android.ui.IconGenerator;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
-import com.unity3d.player.UnityPlayer;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -64,9 +72,10 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
     private String nick_name;
     private User user;
     private RetrofitInterface retrofitInterface;
-    private List<cap> capsuleList;
+    private List<CapsuleOneOfAll> capsuleList;
     private String drawablePath;
     private GoogleMap mMap;
+    private ClusterManager<CapsuleMark> clusterManager;
     private double longitude;
     private double latitude;
     private double cur_lng;
@@ -74,6 +83,8 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
     private Marker curMarker;
     private boolean firstFlag = false;
     private List<Integer> capsuleMarkerImageIdList;
+    private int idCount = 0;
+    private List<User> userList;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -81,13 +92,14 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
         super.onCreate(saveInstanceState);
         setContentView(R.layout.activity_capsulemap);
 
-        Intent intent = getIntent();
+        idCount = 0;
 
         NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
         HashSet<String> nickNameSharedPrefer = (HashSet<String>) nickNameSharedPreferences.getHashSet(
                 NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY,
                 new HashSet<String>()
         );
+
         int count = 0;
         for (String nick : nickNameSharedPrefer) {
             if (count == 0){
@@ -140,8 +152,6 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
         bottomNavigationView.getMenu().getItem(2).setChecked(true);
         bottomNavigationView.setLabelVisibilityMode(LabelVisibilityMode.LABEL_VISIBILITY_UNLABELED);
 
-
-
         //Perform ItemSelectedListener
         bottomNavigationView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -187,21 +197,18 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
 
         Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 0, LocationListener);
-
         if (location != null) {
             longitude = location.getLongitude();
             latitude = location.getLatitude();
-
         } else {
-
-            latitude = 37.52487;
-            longitude = 126.92723;
+            latitude = 37.5512;
+            longitude = 126.9882;
         }
-
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        setCheckBox();
 
     }
 
@@ -219,32 +226,226 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
 
     final android.location.LocationListener LocationListener = new LocationListener() {
         public void onLocationChanged(Location location) {
-
             longitude = location.getLongitude();
             latitude = location.getLatitude();
             //double altitude = location.getAltitude();
             Log.d(TAG, "좌표 ->" + longitude + latitude);
-
-
             userCurrentMark();
         }
-
         @Override
         public void onStatusChanged(String provider, int status, Bundle extras) {
-
         }
-
         @Override
         public void onProviderEnabled(String provider) {
-
         }
-
         @Override
         public void onProviderDisabled(String provider) {
-
         }
     };
 
+    public void setCheckBox(){
+
+        CheckBox checkBoxFollow = (CheckBox) findViewById(R.id.cb_follow);
+        CheckBox checkBoxFollower = (CheckBox)findViewById(R.id.cb_follower);
+
+        checkBoxFollow.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (checkBoxFollower.isChecked() && isChecked){
+                    if (nick_name != null){
+                        // only friends
+                        retrofitInterface.requestF4F(nick_name).enqueue(new Callback<List<User>>() {
+                            @Override
+                            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                                if (response.code() == 401) {
+                                    Intent intent = new Intent(getApplicationContext(), login.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                }
+
+                                if (response.code() == 404) {
+                                    // error
+                                    Log.d(TAG,"server 404 Error");
+                                    return;
+                                }
+                                userList = response.body();
+                                resetClusterItem(false);
+                                refreshCamera();
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<User>> call, Throwable t) {
+
+                            }
+                        });
+                    }
+                } else if (checkBoxFollower.isChecked() && !isChecked){
+                    // only follower
+                    if (nick_name != null){
+                        retrofitInterface.requestFollower(nick_name).enqueue(new Callback<List<User>>() {
+                            @Override
+                            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                                if (response.code() == 401) {
+                                    Intent intent = new Intent(getApplicationContext(), login.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                }
+
+                                if (response.code() == 404) {
+                                    // error
+                                    Log.d(TAG,"server 404 Error");
+                                    return;
+                                }
+                                userList = response.body();
+                                resetClusterItem(false);
+                                refreshCamera();
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<User>> call, Throwable t) {
+
+                            }
+                        });
+                    }
+                } else if (!checkBoxFollower.isChecked() && isChecked) {
+                    // only follow
+                    if (nick_name != null){
+                        retrofitInterface.requestFollow(nick_name).enqueue(new Callback<List<User>>() {
+                            @Override
+                            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                                if (response.code() == 401) {
+                                    Intent intent = new Intent(getApplicationContext(), login.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                }
+
+                                if (response.code() == 404) {
+                                    // error
+                                    Log.d(TAG,"server 404 Error");
+                                    return;
+                                }
+                                userList = response.body();
+                                resetClusterItem(false);
+                                refreshCamera();
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<User>> call, Throwable t) {
+
+                            }
+                        });
+                    }
+                } else {
+                    userList.clear();
+                    resetClusterItem(true);
+                    refreshCamera();
+                }
+            }
+
+        });
+
+        checkBoxFollower.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (checkBoxFollow.isChecked() && isChecked){
+                    // only friends
+                    if (nick_name != null){
+                        retrofitInterface.requestF4F(nick_name).enqueue(new Callback<List<User>>() {
+                            @Override
+                            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                                if (response.code() == 401) {
+                                    Intent intent = new Intent(getApplicationContext(), login.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                }
+
+                                if (response.code() == 404) {
+                                    // error
+                                    Log.d(TAG,"server 404 Error");
+                                    return;
+                                }
+                                userList = response.body();
+                                resetClusterItem(false);
+                                refreshCamera();
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<User>> call, Throwable t) {
+
+                            }
+                        });
+                    }
+                } else if (checkBoxFollow.isChecked() && !isChecked){
+                    // only follow
+                    if (nick_name != null){
+                        retrofitInterface.requestFollow(nick_name).enqueue(new Callback<List<User>>() {
+                            @Override
+                            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                                if (response.code() == 401) {
+                                    Intent intent = new Intent(getApplicationContext(), login.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                }
+
+                                if (response.code() == 404) {
+                                    // error
+                                    Log.d(TAG,"server 404 Error");
+                                    return;
+                                }
+                                userList = response.body();
+                                resetClusterItem(false);
+                                refreshCamera();
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<User>> call, Throwable t) {
+
+                            }
+                        });
+                    }
+                } else if (!checkBoxFollow.isChecked() && isChecked) {
+                    // only follower
+                    if (nick_name != null){
+                        retrofitInterface.requestFollower(nick_name).enqueue(new Callback<List<User>>() {
+                            @Override
+                            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                                if (response.code() == 401) {
+                                    Intent intent = new Intent(getApplicationContext(), login.class);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                }
+
+                                if (response.code() == 404) {
+                                    // error
+                                    Log.d(TAG,"server 404 Error");
+                                    return;
+                                }
+                                userList = response.body();
+                                resetClusterItem(false);
+                                refreshCamera();
+                            }
+
+                            @Override
+                            public void onFailure(Call<List<User>> call, Throwable t) {
+
+                            }
+                        });
+                    }
+                } else {
+                    userList.clear();
+                    resetClusterItem(true);
+                    refreshCamera();
+                }
+            }
+
+        });
+    }
 
     public void userCurrentMark() {
 
@@ -266,7 +467,7 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
         markerOptions2.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
 
         //mMap.moveCamera(CameraUpdateFactory.newLatLng(SEOUL));
-        if (firstFlag == false){
+        if (!firstFlag){
             mMap.animateCamera(CameraUpdateFactory.newLatLng(SEOUL));
             firstFlag = true;
         }
@@ -280,16 +481,29 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
 
         mMap = googleMap;
 
+        clusterManager = new ClusterManager<CapsuleMark>(this, mMap);
+
+
+        /* 맵이 로드될때 카메라 초기화*/
+        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                moveToCurrentPosition();
+            }
+        });
+
+        mMap.setOnCameraIdleListener(clusterManager);
+        mMap.setOnMarkerClickListener(clusterManager);
+
         RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         drawablePath = "res:///" + R.drawable.capsule_temp;
 
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
-        retrofitInterface.requestAllCapsules().enqueue(new Callback<List<cap>>() {
+        retrofitInterface.requestAllCapsules().enqueue(new Callback<List<CapsuleOneOfAll>>() {
             @Override
-            public void onResponse(Call<List<cap>> call, Response<List<cap>> response) {
+            public void onResponse(Call<List<CapsuleOneOfAll>> call, Response<List<CapsuleOneOfAll>> response) {
 
                 if (response.code() == 401) {
                     Intent intent = new Intent(getApplicationContext(), login.class);
@@ -297,94 +511,65 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
-
                 capsuleList = response.body();
-                Log.d(TAG, response.body().toString() + "curMarkerAdd");
-
-                for (int i = 0; i < capsuleList.size(); i++) {
-                    Log.d(TAG, capsuleList.get(i).toString());
-                }
-
-                setUpCapsulesOnMap();
+                addItems();
             }
 
             @Override
-            public void onFailure(Call<List<cap>> call, Throwable t) {
-
+            public void onFailure(Call<List<CapsuleOneOfAll>> call, Throwable t) {
+                Intent intent = new Intent(getApplicationContext(), login.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         });
 
+        setClusterManager();
     }
-    private void setUpCapsulesOnMap() {
+
+    private void refreshCamera(){
+        float zoom = mMap.getCameraPosition().zoom - 0.001f;
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
+    }
+
+    private void moveToCurrentPosition() {
+        LatLng latLng = new LatLng(latitude, longitude);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(9));
+    }
+
+    private void addItems() {
         //mMap.clear();
-
-        List<cap> capsules = capsuleList;
-        Log.i(TAG, "캡슐 정보 " + capsules);
-        int idCount = 0;
-        for (int i = 0; i < capsules.size(); i++) {
-            Log.i(TAG, "start() ");
-            if (capsules.get(i).getStatus_temp() == 1 ){
-                continue;
-            }
-
-            LatLng latLng = new LatLng(capsules.get(i).getLat(), capsules.get(i).getLng());
-
-            Log.d(TAG, latLng.toString());
-
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
-            markerOptions.title(capsules.get(i).getNick_name());
-            //markerOptions.snippet(capsules.get(i).getCapsule_id());
-
-            Log.d(TAG, markerOptions.getTitle());
-
-
-            if(capsuleMarkerImageIdList.size() <= idCount)
-                idCount = 0;
-
-            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(capsuleMarkerImageIdList.get(idCount));
-            Bitmap b = bitmapdraw.getBitmap();
-            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
-            Marker marker = mMap.addMarker(markerOptions);
-
-            idCount++;
+        for (CapsuleOneOfAll item : capsuleList) {
+            if (item.getStatus_temp() == 1 || item.getStatus_lock() == 1)
+                continue ;
+            CapsuleMark capsuleMark = new CapsuleMark(item);
+            clusterManager.addItem(capsuleMark);
         }
-        mMap.setOnMarkerClickListener(this);
-        //OnclickMarker();
         userCurrentMark();
-
     }
 
-    /*
-    private void OnclickMarker () {
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                // 마커 클릭시 호출되는 콜백 메서드
-                Intent intent = new Intent(getApplicationContext(), PopUpActivity.class);
-                intent.putExtra("user_id",marker.getTitle());
-                startActivityForResult(intent, 1);
-                //Toast.makeText(getApplicationContext(),
-                //" 클릭했음" + capsuleList.get(1)
-                //, Toast.LENGTH_SHORT).show();
-                return false;
+    private void resetClusterItem(Boolean allUserFlag) {
+        clusterManager.clearItems();
+        for (CapsuleOneOfAll item : capsuleList){
+            if (item.getStatus_temp() == 1 || item.getStatus_lock() == 1)
+                continue;
+            if (allUserFlag) {
+                CapsuleMark capsuleMark = new CapsuleMark(item);
+                clusterManager.addItem(capsuleMark);
+            } else {
+                Log.d(TAG, userList.toString());
+                for (User user : userList){
+                    if (user.getNick_name().equals(item.getNick_name())){
+                        CapsuleMark capsuleMark = new CapsuleMark(item);
+                        clusterManager.addItem(capsuleMark);
+                        break;
+                    }
+                }
             }
-        });
-    }
-    */
-    @Override
-    public boolean onMarkerClick(Marker marker) {
-        if (!marker.getId().equals(curMarker.getId())) {
-            Intent intent = new Intent(getApplicationContext(), PopUpActivity.class);
-            intent.putExtra("nick_name2",marker.getTitle());
-            startActivityForResult(intent, 1);
-            return false;
-        } else {
 
-            return false;
         }
-
+        userCurrentMark();
     }
 
     public void initCapsuleMarkerImageIdList() {
@@ -401,4 +586,72 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
         capsuleMarkerImageIdList.add(R.drawable.capsule_marker_stone);
         capsuleMarkerImageIdList.add(R.drawable.capsule_marker_yellow);
     }
+
+    private void setClusterManager(){
+
+        clusterManager.setRenderer(new MarkerClusterRenderer(this, mMap, clusterManager));
+        clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<CapsuleMark>() {
+            @Override
+            public boolean onClusterClick(Cluster<CapsuleMark> cluster) {
+                LatLngBounds.Builder builder_c = LatLngBounds.builder();
+                for (ClusterItem item : cluster.getItems()) {
+                    builder_c.include(item.getPosition());
+                }
+                LatLngBounds bounds_c = builder_c.build();
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds_c, 9));
+                float zoom = mMap.getCameraPosition().zoom - 0.5f;
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
+                return false;
+            }
+        });
+        clusterManager.setOnClusterItemClickListener(new ClusterManager.OnClusterItemClickListener<CapsuleMark>() {
+            @Override
+            public boolean onClusterItemClick(CapsuleMark capsuleMark) {
+                Intent intent = new Intent(getApplicationContext(), PopUpActivity.class);
+                intent.putExtra("nick_name2", capsuleMark.getNickName());
+                startActivityForResult(intent, 1);
+                return false;
+            }
+        });
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        return false;
+    }
+
+    class MarkerClusterRenderer extends DefaultClusterRenderer<CapsuleMark> {
+        private static final int MARKER_DIMENSION_X = 70; // Setting the constant value for the single marker size.
+        private static final int MARKER_DIMENSION_Y = 70;
+
+        private final IconGenerator iconGenerator;
+        private final ImageView markerImageView;
+
+        public MarkerClusterRenderer(Context context, GoogleMap map, ClusterManager<CapsuleMark> clusterManager) {
+            super(context, map, clusterManager);
+            iconGenerator = new IconGenerator(context);
+            //iconGenerator.setBackground(getResources().getDrawable(R.drawable.marker_bg));
+            markerImageView = new ImageView(context);
+            markerImageView.setLayoutParams(new ViewGroup.LayoutParams(MARKER_DIMENSION_X, MARKER_DIMENSION_Y));
+            iconGenerator.setContentView(markerImageView);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(CapsuleMark item, MarkerOptions markerOptions) {
+
+            //BitmapDrawable bitmapDraw = (BitmapDrawable) getResources().getDrawable(capsuleMarkerImageIdList.get(idCount++));
+            //Bitmap b = bitmapDraw.getBitmap();
+            //Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
+            //markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+            if (idCount >= capsuleMarkerImageIdList.size())
+                idCount = 0;
+            markerImageView.setImageResource(capsuleMarkerImageIdList.get(idCount++));
+            Bitmap icon = iconGenerator.makeIcon();
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
+            markerOptions.snippet(item.getSnippet());
+            markerOptions.title(item.getTitle());
+            super.onBeforeClusterItemRendered(item, markerOptions);
+        }
+    }
+
 }

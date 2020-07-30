@@ -104,7 +104,7 @@ interface RetrofitInterface {
             @Part("title") title: RequestBody,
             @Part("text") text: RequestBody,
             @Part("expire") expire: RequestBody,
-            @Part("members") members: RequestBody,
+            @Part("members") members: List<String>,
             @Part file: List<MultipartBody.Part>
     ) : Call<Success>
 
@@ -145,6 +145,11 @@ interface RetrofitInterface {
             @Path("nick_name") nick_name: String
     ):Call<List<User>>
 
+    @GET("/follow/forfollow/list/{nick_name}")
+    fun requestF4F(
+            @Path("nick_name") nick_name: String
+    ):Call<List<User>>
+
     @GET("/users")
     fun requestAllUser(
     ):Call<List<User>>
@@ -160,7 +165,7 @@ interface RetrofitInterface {
     ):Call<Success>
 
     @Multipart
-    @PUT("/users/images")
+    @PUT("/users/image")
     fun settingUser2(
             @Part("pre_nick_name") pre_nick_name: RequestBody,
             @Part("password") password: RequestBody,
@@ -169,11 +174,11 @@ interface RetrofitInterface {
     ):Call<Success>
 
     @GET("/capsules/")
-    fun requestAllCapsules():Call <List<cap>>
+    fun requestAllCapsules():Call <List<CapsuleOneOfAll>>
 
     @GET("/capsules/")
     fun requestUserCapsules()
-            :Call <List<cap>>
+            :Call <List<CapsuleOneOfAll>>
 
     @GET("/session/")
     fun requestSessionAuth()

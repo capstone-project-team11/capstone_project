@@ -82,7 +82,6 @@ public class CapsuleLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
 
-
         if(getItemViewType(position) == 0){
 
                 if (arrayList.get(position).getIv_url().length() == 10) {

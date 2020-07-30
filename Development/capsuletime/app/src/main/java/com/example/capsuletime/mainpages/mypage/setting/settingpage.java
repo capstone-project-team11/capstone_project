@@ -140,7 +140,6 @@ public class settingpage extends AppCompatActivity {
                     MultipartBody.Part multipartBody = MultipartBody.Part.createFormData("file", file.getName(), requestImage);
                     Log.d(TAG, "파일 이름 = " + file.getName().toString() + " " + requestImage.toString());*/
 
-
                 RequestBody user_id2 = RequestBody.create(MediaType.parse("text/plain"), nick_name);
                 RequestBody password2 = RequestBody.create(MediaType.parse("text/plain"), et_pw.getText().toString());
                 RequestBody nick_name2 = RequestBody.create(MediaType.parse("text/plain"), et_nick.getText().toString());

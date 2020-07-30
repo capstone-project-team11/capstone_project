@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -30,6 +31,7 @@ import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.example.capsuletime.Capsule;
+import com.example.capsuletime.CapsuleOneOfAll;
 import com.example.capsuletime.R;
 import com.example.capsuletime.RetrofitClient;
 import com.example.capsuletime.RetrofitInterface;
@@ -37,7 +39,8 @@ import com.example.capsuletime.User;
 import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
 import com.example.capsuletime.login.login;
 import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
-import com.example.capsuletime.mainpages.capsulemap.PopUpActivity;
+import com.example.capsuletime.mainpages.capsulemap.CapsuleMark;
+import com.example.capsuletime.mainpages.capsulemap.capsulemap;
 import com.example.capsuletime.mainpages.followpage.followerpage;
 import com.example.capsuletime.mainpages.followpage.followpage;
 import com.example.capsuletime.mainpages.mypage.setting.settingpage;
@@ -47,15 +50,20 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.bottomnavigation.LabelVisibilityMode;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterItem;
+import com.google.maps.android.clustering.ClusterManager;
+import com.google.maps.android.clustering.view.DefaultClusterRenderer;
+import com.google.maps.android.ui.IconGenerator;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
 import java.io.IOException;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -80,9 +88,11 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
     private double latitude;
     private double cur_lng;
     private double cur_lat;
+    private ClusterManager<CapsuleMark> clusterManager;
     private Marker curMarker;
     private boolean firstFlag = false;
     private List<Integer> capsuleMarkerImageIdList;
+    private int idCount;
 
     @SuppressLint("MissingPermission")
     @Override
@@ -99,6 +109,8 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
                 .setDeniedMessage("거부하셨습니다.")
                 .setPermissions(Manifest.permission.ACCESS_FINE_LOCATION)
                 .check();
+
+        idCount = 0;
 
         NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
         HashSet<String> nickNameSharedPrefer = (HashSet<String>) nickNameSharedPreferences.getHashSet(
@@ -234,11 +246,13 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
                         overridePendingTransition(0,0);
                         return true;
                     }
-                    case R.id.capsulemap:
+                    case R.id.capsulemap: {
+                        Intent intent = new Intent(getApplicationContext(), capsulemap.class);
+                        startActivity(intent);
+                        overridePendingTransition(0, 0);
                         return true;
-
+                    }
                     case R.id.capsulear: {
-
                         Intent intent = new Intent(getApplicationContext(), UnityPlayerActivity.class);
                         startActivity(intent);
                         overridePendingTransition(0,0);
@@ -352,13 +366,25 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
 
         mMap = googleMap;
 
+        clusterManager = new ClusterManager<CapsuleMark>(this, mMap);
+
+        /* 맵이 로드될때 카메라 초기화*/
+        mMap.setOnMapLoadedCallback(new GoogleMap.OnMapLoadedCallback() {
+            @Override
+            public void onMapLoaded() {
+                moveToCurrentPosition();
+            }
+        });
+
+        mMap.setOnCameraIdleListener(clusterManager);
+        mMap.setOnMarkerClickListener(clusterManager);
+
         RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
         final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         drawablePath = "res:///" + R.drawable.capsule_temp;
 
-        mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
 
         String inStr = (nick_name != null) ? nick_name : user.getNick_name();
         if (inStr != null)
@@ -372,111 +398,44 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(intent);
                 }
-
                 capsuleList = response.body();
-                setUpCapsulesOnMap();
+                addItems();
             }
 
             @Override
             public void onFailure(Call<List<Capsule>> call, Throwable t) {
-
+                Intent intent = new Intent(getApplicationContext(), login.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
             }
         });
-
+        setClusterManager();
     }
-    private void setUpCapsulesOnMap() {
+
+    private void moveToCurrentPosition() {
+        LatLng latLng = new LatLng(latitude, longitude);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(9));
+    }
+
+    private void addItems() {
         //mMap.clear();
-        final Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-        String location = "Default";
-        List<Capsule> capsules = capsuleList;
-        Log.i(TAG, "캡슐 정보 " + capsules);
-        int idCount = 0;
-        for (int i = 0; i < capsules.size(); i++) {
-            Log.i(TAG, "start() ");
-            if (capsules.get(i).getStatus_temp() == 1 ){
-                continue;
-            }
-
-            LatLng latLng = new LatLng(capsules.get(i).getLat(), capsules.get(i).getLng());
-
-            Log.d(TAG, latLng.toString());
-
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(latLng);
-
-            try {
-                DecimalFormat df = new DecimalFormat();
-                df.setMaximumFractionDigits(3);
-                double lat = Double.parseDouble(df.format(capsules.get(i).getLat()));
-                double lng = Double.parseDouble(df.format(capsules.get(i).getLng()));
-
-                List<Address> list = geocoder.getFromLocation(lat, lng, 3);
-                if (list != null) {
-                    if (list.size() == 0){
-                        // no
-                    } else {
-                        location = list.get(0).getAddressLine(0);
-                        Log.d(TAG, "location good");
-                    }
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-            markerOptions.title(location);
-            //markerOptions.snippet(capsules.get(i).getCapsule_id());
-
-            Log.d(TAG, markerOptions.getTitle());
-
-
-            if(capsuleMarkerImageIdList.size() <= idCount)
-                idCount = 0;
-
-            BitmapDrawable bitmapdraw = (BitmapDrawable) getResources().getDrawable(capsuleMarkerImageIdList.get(idCount));
-            Bitmap b = bitmapdraw.getBitmap();
-            Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
-            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
-            Marker marker = mMap.addMarker(markerOptions);
-
-            idCount++;
+        for (Capsule item : capsuleList) {
+            if (item.getStatus_temp() == 1 || item.getStatus_lock() == 1)
+                continue ;
+            CapsuleOneOfAll capsule = new CapsuleOneOfAll(item.getCapsule_id(), item.getUser_id(), item.getNick_name(), item.getTitle(),
+                    item.getText(), item.getViews(), item.getLikes(), item.getDate_created(),  item.getDate_opened(),
+                    item.getStatus_temp(), item.getLat(), item.getLng(), item.getStatus_lock());
+            CapsuleMark capsuleMark = new CapsuleMark(capsule);
+            clusterManager.addItem(capsuleMark);
         }
-        mMap.setOnMarkerClickListener(this);
-        //OnclickMarker();
         userCurrentMark();
-
     }
 
-    /*
-    private void OnclickMarker () {
-        mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
-            @Override
-            public boolean onMarkerClick(Marker marker) {
-                // 마커 클릭시 호출되는 콜백 메서드
-
-                Intent intent = new Intent(getApplicationContext(), PopUpActivity.class);
-                intent.putExtra("user_id",marker.getTitle());
-                startActivityForResult(intent, 1);
-
-                //Toast.makeText(getApplicationContext(),
-                //" 클릭했음" + capsuleList.get(1)
-                //, Toast.LENGTH_SHORT).show();
-
-                return false;
-            }
-        });
-    }
-    */
     @Override
     public boolean onMarkerClick(Marker marker) {
-        if (!marker.getId().equals(curMarker.getId())) {
-
-            return false;
-        } else {
-
-            return false;
-        }
-
+        return false;
     }
 
     public void initCapsuleMarkerImageIdList() {
@@ -493,6 +452,69 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
         capsuleMarkerImageIdList.add(R.drawable.capsule_marker_stone);
         capsuleMarkerImageIdList.add(R.drawable.capsule_marker_yellow);
     }
+
+    private void setClusterManager(){
+
+        clusterManager.setRenderer(new MarkerClusterRenderer(this, mMap, clusterManager));
+        clusterManager.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<CapsuleMark>() {
+            @Override
+            public boolean onClusterClick(Cluster<CapsuleMark> cluster) {
+                LatLngBounds.Builder builder_c = LatLngBounds.builder();
+                for (ClusterItem item : cluster.getItems()) {
+                    builder_c.include(item.getPosition());
+                }
+                LatLngBounds bounds_c = builder_c.build();
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds_c, 9));
+                float zoom = mMap.getCameraPosition().zoom - 0.5f;
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(zoom));
+                return false;
+            }
+        });
+    }
+
+    class MarkerClusterRenderer extends DefaultClusterRenderer<CapsuleMark> {
+        private static final int MARKER_DIMENSION_X = 70; // Setting the constant value for the single marker size.
+        private static final int MARKER_DIMENSION_Y = 70;
+
+        private final IconGenerator iconGenerator;
+        private final ImageView markerImageView;
+        private final Geocoder geocoder;
+
+        public MarkerClusterRenderer(Context context, GoogleMap map, ClusterManager<CapsuleMark> clusterManager) {
+            super(context, map, clusterManager);
+            iconGenerator = new IconGenerator(context);
+            //iconGenerator.setBackground(getResources().getDrawable(R.drawable.marker_bg));
+            geocoder = new Geocoder(getApplicationContext(), Locale.getDefault());
+            markerImageView = new ImageView(context);
+            markerImageView.setLayoutParams(new ViewGroup.LayoutParams(MARKER_DIMENSION_X, MARKER_DIMENSION_Y));
+            iconGenerator.setContentView(markerImageView);
+        }
+
+        @Override
+        protected void onBeforeClusterItemRendered(CapsuleMark item, MarkerOptions markerOptions) {
+
+            //BitmapDrawable bitmapDraw = (BitmapDrawable) getResources().getDrawable(capsuleMarkerImageIdList.get(idCount++));
+            //Bitmap b = bitmapDraw.getBitmap();
+            //Bitmap smallMarker = Bitmap.createScaledBitmap(b, 80, 80, false);
+            //markerOptions.icon(BitmapDescriptorFactory.fromBitmap(smallMarker));
+            if (idCount >= capsuleMarkerImageIdList.size())
+                idCount = 0;
+            markerImageView.setImageResource(capsuleMarkerImageIdList.get(idCount++));
+            Bitmap icon = iconGenerator.makeIcon();
+            markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
+            markerOptions.snippet(item.getSnippet());
+            try {
+                List<Address> list = geocoder.getFromLocation(item.getPosition().latitude,
+                        item.getPosition().longitude, 3);
+                if (list.size() > 0)
+                    markerOptions.title(list.get(0).getAddressLine(0));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            super.onBeforeClusterItemRendered(item, markerOptions);
+        }
+    }
+
 }
 
 

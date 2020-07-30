@@ -27,13 +27,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.capsuletime.Capsule;
 import com.example.capsuletime.CapsuleLogData;
+import com.example.capsuletime.CapsuleOneOfAll;
 import com.example.capsuletime.FollowLogData;
 import com.example.capsuletime.R;
 import com.example.capsuletime.RetrofitClient;
 import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.Setting;
 import com.example.capsuletime.User;
-import com.example.capsuletime.cap;
+
 import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
 import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
 import com.example.capsuletime.mainpages.capsulemap.capsulemap;
@@ -64,7 +65,7 @@ public class searchpage extends AppCompatActivity {
     private SearchLogAdapter searchLogAdapter;
     private HashTagLogAdapter hashTagLogAdapter;
     private List<User> userList;
-    private List<cap> capList;
+    private List<CapsuleOneOfAll> capList;
     private List<Follow> list;
     //private ArrayList<String> arraylist;
     private EditText editSearch;
@@ -241,14 +242,14 @@ public class searchpage extends AppCompatActivity {
         RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
-        Call<List<cap>> call = retrofitInterface.requestAllCapsules();
+        Call<List<CapsuleOneOfAll>> call = retrofitInterface.requestAllCapsules();
 
-        call.enqueue(new Callback<List<cap>>() {
+        call.enqueue(new Callback<List<CapsuleOneOfAll>>() {
             @Override
-            public void onResponse(Call<List<cap>> call, Response<List<cap>> response) {
+            public void onResponse(Call<List<CapsuleOneOfAll>> call, Response<List<CapsuleOneOfAll>> response) {
                 capList = response.body();
                 if (call != null) {
-                    for (cap user : capList) {
+                    for (CapsuleOneOfAll user : capList) {
                         if(query.isEmpty() || query.equals("")){arrayList.clear();}
                         String text = user.getText();
                         String nick_name = user.getNick_name();
@@ -291,7 +292,7 @@ public class searchpage extends AppCompatActivity {
 
 
             @Override
-            public void onFailure(Call<List<cap>> call, Throwable t) {
+            public void onFailure(Call<List<CapsuleOneOfAll>> call, Throwable t) {
 
             }
         });
@@ -304,14 +305,14 @@ public class searchpage extends AppCompatActivity {
         RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
-        Call<List<cap>> call = retrofitInterface.requestAllCapsules();
+        Call<List<CapsuleOneOfAll>> call = retrofitInterface.requestAllCapsules();
 
-        call.enqueue(new Callback<List<cap>>() {
+        call.enqueue(new Callback<List<CapsuleOneOfAll>>() {
             @Override
-            public void onResponse(Call<List<cap>> call, Response<List<cap>> response) {
+            public void onResponse(Call<List<CapsuleOneOfAll>> call, Response<List<CapsuleOneOfAll>> response) {
                 capList = response.body();
                 if (call != null) {
-                    for (cap user : capList) {
+                    for (CapsuleOneOfAll user : capList) {
                         if(query.isEmpty() || query.equals("")){arrayList.clear();}
                         String text = user.getText();
                         String nick_name = user.getNick_name();
@@ -333,7 +334,7 @@ public class searchpage extends AppCompatActivity {
 
 
             @Override
-            public void onFailure(Call<List<cap>> call, Throwable t) {
+            public void onFailure(Call<List<CapsuleOneOfAll>> call, Throwable t) {
 
             }
         });

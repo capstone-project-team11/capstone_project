@@ -10,8 +10,9 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.capsuletime.CapsuleOneOfAll;
 import com.example.capsuletime.R;
-import com.example.capsuletime.cap;
+
 import com.example.capsuletime.mainpages.userpage.userpage;
 
 import java.util.ArrayList;
@@ -21,12 +22,12 @@ import java.util.ArrayList;
 
 public class HashTagLogAdapter extends RecyclerView.Adapter<HashTagLogAdapter.FolloewLogAdapter> {
 
-    private  ArrayList<cap> arrayList;
+    private  ArrayList<CapsuleOneOfAll> arrayList;
     private Context context;
     private static final String TAG = "FollowLogAdapterPage";
 
 
-    public HashTagLogAdapter(ArrayList<cap> arrayList, Context context) {
+    public HashTagLogAdapter(ArrayList<CapsuleOneOfAll> arrayList, Context context) {
         this.arrayList = arrayList;
         this.context = context;
     }

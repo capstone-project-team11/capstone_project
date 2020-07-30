@@ -9,4 +9,6 @@
     <color name="menuUnClicked">#FF404040</color>
     <color name="menuClicked">#FFc8c6c6</color>
     <color name="windowBackground">#A0FFFFFF</color>
+    <color name="gradientStart">#FFFFFF</color>
+    <color name="gradientEnd">#FFFFFF</color>
 </resources>
