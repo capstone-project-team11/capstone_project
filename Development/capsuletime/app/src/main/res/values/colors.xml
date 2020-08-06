@@ -11,4 +11,6 @@
     <color name="windowBackground">#A0FFFFFF</color>
     <color name="gradientStart">#FFFFFF</color>
     <color name="gradientEnd">#FFFFFF</color>
+    <color name="searchHintColor">#745656</color>
+    <color name="mainBG">#ececec</color>
 </resources>

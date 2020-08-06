@@ -1,11 +1,14 @@
 package com.example.capsuletime.mainpages.searchpage;
 
 
+import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.Html;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
@@ -13,12 +16,12 @@ import android.view.MenuItem;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.DividerItemDecoration;
@@ -80,6 +83,9 @@ public class searchpage extends AppCompatActivity {
         setContentView(R.layout.activity_searchpage);
 
         SearchView searchView = findViewById(R.id.editSearch);
+
+        ((EditText) searchView.findViewById(androidx.appcompat.R.id.search_src_text)).setTextColor(getResources().getColor(R.color.colorPrimaryDark));
+        ((EditText) searchView.findViewById(androidx.appcompat.R.id.search_src_text)).setHintTextColor(getResources().getColor(R.color.searchHintColor));
 
         Intent intent = getIntent();
         //hashtag = intent.getStringExtra("hashtag");
@@ -156,11 +162,11 @@ public class searchpage extends AppCompatActivity {
 
                     case R.id.capsulemap:{
                         if (Build.VERSION.SDK_INT >= 23 &&
-                                ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            ActivityCompat.requestPermissions(searchpage.this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                                ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(searchpage.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                                     0);
                             break;
-                        } else if (ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
+                        } else if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
 
                             Intent intent = new Intent(getApplicationContext(), capsulemap.class);
                             startActivity(intent);
