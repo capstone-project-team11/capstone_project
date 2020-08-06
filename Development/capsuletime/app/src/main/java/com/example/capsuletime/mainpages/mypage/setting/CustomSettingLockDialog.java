@@ -19,6 +19,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -30,6 +31,7 @@ import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.User;
 import com.example.capsuletime.core.preferences.LockNickNameSharedPreferences;
 import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
+import com.example.capsuletime.mainpages.mypage.ModifyCapsule;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -295,10 +297,16 @@ public class CustomSettingLockDialog {
 
             @Override
             public void onClick(View view) {
+                if(et_Date.getText().toString().equals("Date") || et_time.getText().toString().equals("Time") ){
 
-                Log.d(TAG, et_Date.getText().toString() +" " + et_time.getText().toString()+":10 " + "" + result);
-                main_label.setText(et_Date.getText().toString() +" " + et_time.getText().toString()+":10" + "/" + result);
-                dlg.dismiss();
+                    Toast.makeText(context, "날짜를 입력해주세요.", Toast.LENGTH_SHORT).show();
+
+                } else {
+
+                    Log.d(TAG, et_Date.getText().toString() + " " + et_time.getText().toString() + ":10 " + "" + result);
+                    main_label.setText(et_Date.getText().toString() + " " + et_time.getText().toString() + ":10" + "/" + result);
+                    dlg.dismiss();
+                }
 
             }
         });

@@ -189,7 +189,7 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), userpage.class);
-                intent.putExtra("nick_name", user.getNick_name());
+                intent.putExtra("nick_name2", user.getNick_name());
                 intent.putExtra("user_id", user_id);
                 Log.d(TAG, user.toString());
                 startActivity(intent);

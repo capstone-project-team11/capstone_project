@@ -649,7 +649,7 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
             Bitmap icon = iconGenerator.makeIcon();
             markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
             markerOptions.snippet(item.getSnippet());
-            markerOptions.title(item.getTitle());
+            markerOptions.title(item.getNickName());
             super.onBeforeClusterItemRendered(item, markerOptions);
         }
     }

@@ -65,8 +65,10 @@ import retrofit2.Response;
 public class mypage extends AppCompatActivity {
 
     private String user_id;
+    private String expire_date;
     private String nick_name;
     private String url;
+    private String lock_d_day;
     private int capsule_id;
     private ArrayList<CapsuleLogData> arrayList;
     private ArrayList<Comment> arrayList2;
@@ -244,6 +246,7 @@ public class mypage extends AppCompatActivity {
                             int state_temp = capsule.getStatus_temp();
                             int state_lock = capsule.getStatus_lock();
                             int capsule_id = capsule.getCapsule_id();
+                            int capsule_key_count = capsule.getKey_count();
                             String title = capsule.getTitle() != null ? capsule.getTitle() : "";
                             String url = capsule.getContent().size() != 0 ?
                                     capsule.getContent().get(0).getUrl() : Integer.toString(R.drawable.capsule_marker_angry);
@@ -252,6 +255,43 @@ public class mypage extends AppCompatActivity {
                             String opened_date = capsule.getDate_created();
                             String location = "Default";
                             String d_day = "0";
+                            if(capsule.getExpire() != null) {
+                                expire_date = capsule.getExpire();
+
+                                try {
+                                    // UTC -> LOCAL TIME
+                                    SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                    String created_utcDate = capsule.getDate_created();
+                                    Date crt_date = getLocalTime(created_utcDate);
+
+                                    String localDate = fm.format(crt_date);
+                                    created_date = localDate.substring(0, 4) + "년 " + localDate.substring(5, 7) +
+                                            "월 " + localDate.substring(8, 10) + "일 " + localDate.substring(11, 13) + "시";
+
+
+
+                                    String opened_utcDate = expire_date;
+                                    Date opn_date = getLocalTime(opened_utcDate);
+                                    localDate = fm.format(opn_date);
+                                    opened_date = localDate.substring(0, 4) + "년 " + localDate.substring(5, 7) +
+                                            "월 " + localDate.substring(8, 10) + "일 " + localDate.substring(11, 13) + "시";
+
+                                    Date date = new Date();
+
+                                    long diff = date.getTime() - opn_date.getTime();
+                                    if(diff > 0) {
+                                        lock_d_day = "D +" + Long.toString(diff / (1000 * 60 * 60 * 24));
+                                    } else {
+                                        lock_d_day = "D " + Long.toString(diff / (1000 * 60 * 60 * 24));
+                                    }
+                                    Log.d(TAG,"만료기간 디데이: " + d_day.toString());
+
+                                    //Log.d(TAG,created_date);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                    Log.d(TAG, "asdasd");
+                                }
+                            }
                             String text = capsule.getText();
                             int likes = capsule.getLikes();
                             // UTC Time control
@@ -267,6 +307,8 @@ public class mypage extends AppCompatActivity {
                                 created_date = localDate.substring(0, 4) + "년 " + localDate.substring(5, 7) +
                                         "월 " + localDate.substring(8, 10) + "일 " + localDate.substring(11, 13) + "시";
 
+
+
                                 String opened_utcDate = capsule.getDate_opened();
                                 Date opn_date = getLocalTime(opened_utcDate);
                                 localDate = fm.format(opn_date);
@@ -276,7 +318,7 @@ public class mypage extends AppCompatActivity {
                                 Date date = new Date();
 
                                 long diff = date.getTime() - opn_date.getTime();
-                                d_day = "D - " + Long.toString( diff/ (1000 * 60 * 60 * 24) );
+                                d_day = "D - " + Long.toString(diff / (1000 * 60 * 60 * 24));
 
                                 //Log.d(TAG,created_date);
                             } catch (ParseException e) {
@@ -292,7 +334,7 @@ public class mypage extends AppCompatActivity {
 
                                 List<Address> list = geocoder.getFromLocation(lat, lng, 3);
                                 if (list != null) {
-                                    if (list.size() == 0){
+                                    if (list.size() == 0) {
                                         // no
                                     } else {
                                         location = list.get(0).getAddressLine(0);
@@ -303,12 +345,42 @@ public class mypage extends AppCompatActivity {
                                 e.printStackTrace();
                             }
 
-                            Log.d(TAG,url+" "+title+" "+created_date+" "+opened_date+" "+location+" "+state_temp);
+                            Log.d(TAG, url + " " + title + " " + created_date + " " + opened_date + " " + location + " " + state_lock + " " + state_temp);
 
-                            CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, d_day,
-                                    url, title, text,likes, "#절친 #평생친구", created_date,
-                                    opened_date, location, state_temp, state_lock, contentList);
-                            arrayList.add(capsuleLogData);
+                            int viewType = 0;
+
+                            if(state_temp == 0 && state_lock == 0){
+                                viewType = 0;
+
+                                CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, d_day,
+                                        url, title, text,likes, "#절친 #평생친구", created_date,
+                                        opened_date, location, state_temp, state_lock, contentList, viewType);
+                                arrayList.add(capsuleLogData);
+                            } else if(state_temp == 1 && state_lock == 0) {
+                                viewType = 1;
+
+                                CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, d_day,
+                                        url, title, text,likes, "#절친 #평생친구", created_date,
+                                        opened_date, location, state_temp, state_lock, contentList, 1);
+                                arrayList.add(capsuleLogData);
+                            } else if(state_lock == 1) {
+
+                                if(capsule_key_count == 0){
+                                    viewType = 0;
+
+                                    CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, d_day,
+                                            url, title, text,likes, "#절친 #평생친구", created_date,
+                                            opened_date, location, state_temp, state_lock, contentList, viewType);
+                                    arrayList.add(capsuleLogData);
+                                } else {
+                                    viewType = 2;
+                                    CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, d_day,
+                                            url, lock_d_day, text, likes, "#절친 #평생친구", created_date,
+                                            opened_date, location, state_temp, state_lock, contentList, 2);
+                                    arrayList.add(capsuleLogData);
+                                }
+                            }
+
                             capsuleLogAdapter.notifyDataSetChanged(); // redirect
                         }
                     }

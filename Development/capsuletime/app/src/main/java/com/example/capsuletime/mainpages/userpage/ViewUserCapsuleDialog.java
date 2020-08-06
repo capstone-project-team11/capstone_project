@@ -183,48 +183,6 @@ public class ViewUserCapsuleDialog {
 
             }
         });
-
-        iv_delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // delete 통신
-                // if 문으로 재확인 구문 필요
-                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        switch (which){
-                            case DialogInterface.BUTTON_POSITIVE: {
-                                // server 에서 delete 시
-                                retrofitInterface.requestDeleteCapsule(capsuleLogData.getCapsule_id()).enqueue(new Callback<Success>() {
-                                    @Override
-                                    public void onResponse(Call<Success> call, Response<Success> response) {
-                                        userCapsuleLogAdapter.remove(position);
-                                        userCapsuleLogAdapter.notifyDataSetChanged();
-                                        dlg.dismiss();
-                                    }
-
-                                    @Override
-                                    public void onFailure(Call<Success> call, Throwable t) {
-                                        Toast.makeText(v.getContext(), "삭제를 실패했습니다.",Toast.LENGTH_SHORT).show();
-                                    }
-                                });
-                                break;
-                            }
-
-                            case DialogInterface.BUTTON_NEGATIVE:
-                                break;
-                        }
-                    }
-                };
-
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setMessage("Are you sure?").setPositiveButton("Yes", dialogClickListener)
-                        .setNegativeButton("No", dialogClickListener).show();
-
-
-
-            }
-        });
     }
 
 }

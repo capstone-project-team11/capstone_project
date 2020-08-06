@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Process;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -60,6 +61,13 @@ public class UnityPlayerActivity extends Activity
         mUnityPlayer = new UnityPlayer(this);
         setContentView(mUnityPlayer);
         mUnityPlayer.requestFocus();
+
+        Handler mHandler = new Handler();
+        mHandler.postDelayed(new Runnable()  {
+            public void run() {
+                UnityPlayer.UnitySendMessage("Controller", "setUserNick", nick_name);
+            }
+        }, 9000);
     }
 
     @Override protected void onNewIntent(Intent intent)
@@ -70,6 +78,7 @@ public class UnityPlayerActivity extends Activity
         // replace the intent with the one caught here.
         setIntent(intent);
     }
+
 
     // Quit Unity
     @Override protected void onDestroy ()

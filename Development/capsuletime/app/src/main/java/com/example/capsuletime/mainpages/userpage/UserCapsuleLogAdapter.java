@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide;
 import com.example.capsuletime.CapsuleLogData;
 import com.example.capsuletime.R;
 import com.example.capsuletime.User;
+import com.example.capsuletime.mainpages.mypage.CapsuleLogAdapter;
 import com.example.capsuletime.mainpages.mypage.ModifyCapsule;
 import com.example.capsuletime.mainpages.mypage.dialogs.ViewCapsuleDialog;
 
@@ -53,17 +54,13 @@ public class UserCapsuleLogAdapter extends RecyclerView.Adapter<RecyclerView.Vie
         if (viewType == 0) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_capsule_log,parent,false);
             return new CapsuleViewHolder(view);
-            /*if(arrayList.get(position).getStatus_lock() == 1 ){
-                view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_capsule_lock_log,parent,false);
-                return new LockCapsuleViewHolder(view);
-            }*/
-        } else /*if (viewType == 1)*/ { // (viewType == 1)
+        } else if (viewType == 1) { // (viewType == 1)
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_capsule_temp_log,parent,false);
             return new TempCapsuleViewHolder(view);
-        } /*else {
+        } else {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_capsule_lock_log,parent,false);
             return new LockCapsuleViewHolder(view);
-        }*/
+        }
 
     }
 
@@ -149,6 +146,12 @@ public class UserCapsuleLogAdapter extends RecyclerView.Adapter<RecyclerView.Vie
                     //remove(((TempCapsuleViewHolder) holder).getAdapterPosition());
                 }
             });
+        } if(getItemViewType(position) == 2){
+            ((LockCapsuleViewHolder) holder).tv_title.setText(arrayList.get(position).getTv_title());
+
+
+
+
         }
 
 
@@ -156,7 +159,7 @@ public class UserCapsuleLogAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
     @Override
     public int getItemViewType(int position) {
-        return this.arrayList.get(position).getState_temp();
+        return this.arrayList.get(position).getViewType();
     }
 
     @Override

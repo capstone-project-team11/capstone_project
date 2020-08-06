@@ -182,9 +182,11 @@ public class ViewCapsuleDialog {
                                 retrofitInterface.requestDeleteCapsule(capsuleLogData.getCapsule_id()).enqueue(new Callback<Success>() {
                                     @Override
                                     public void onResponse(Call<Success> call, Response<Success> response) {
-                                        capsuleLogAdapter.remove(position);
-                                        capsuleLogAdapter.notifyDataSetChanged();
-                                        dlg.dismiss();
+
+                                            capsuleLogAdapter.remove(position);
+                                            capsuleLogAdapter.notifyDataSetChanged();
+                                            dlg.dismiss();
+
                                     }
 
                                     @Override

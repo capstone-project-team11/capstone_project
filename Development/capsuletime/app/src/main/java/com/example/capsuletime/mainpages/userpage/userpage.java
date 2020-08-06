@@ -29,6 +29,7 @@ import com.example.capsuletime.R;
 import com.example.capsuletime.RetrofitClient;
 import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.User;
+import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
 import com.example.capsuletime.login.login;
 import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
 import com.example.capsuletime.mainpages.capsulemap.capsulemap;
@@ -44,6 +45,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -57,6 +59,9 @@ public class userpage extends AppCompatActivity {
 
     private String user_id;
     private String nick_name;
+    private String nick_name2;
+    private String expire_date;
+    private String lock_d_day;
     private ArrayList<CapsuleLogData> arrayList;
     private UserCapsuleLogAdapter userCapsuleLogAdapter;
     private RecyclerView recyclerView;
@@ -74,13 +79,26 @@ public class userpage extends AppCompatActivity {
         setContentView(R.layout.activity_user_page);
         Intent intent = getIntent();
         user_id = intent.getStringExtra("user_id");
-        nick_name = intent.getStringExtra("nick_name");
+        nick_name2 = intent.getStringExtra("nick_name2");
 
         fromArFlag = intent.getIntExtra("fromAr",0);
-        Log.d(TAG, "아이디랑 닉넴 = " + user_id+nick_name);
+        Log.d(TAG, "아이디랑 닉넴 = " + user_id+nick_name2);
 
         ImageView iv_user = (ImageView) this.findViewById(R.id.user_image);
         TextView tv_nick = (TextView) this.findViewById(R.id.tv_nick);
+
+        NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
+        HashSet<String> nickNameSharedPrefer = (HashSet<String>) nickNameSharedPreferences.getHashSet(
+                NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY,
+                new HashSet<String>()
+        );
+        int count = 0;
+        for (String nick : nickNameSharedPrefer) {
+            if (count == 0){
+                nick_name = nick;
+            }
+            count ++;
+        }
 
 
         RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
@@ -102,9 +120,9 @@ public class userpage extends AppCompatActivity {
 
 
 
-        if(nick_name != null){
-            tv_nick.setText(nick_name);
-            retrofitInterface.requestSearchUser(nick_name).enqueue(new Callback<User>() {
+        if(nick_name2 != null){
+            tv_nick.setText(nick_name2);
+            retrofitInterface.requestSearchUser(nick_name2).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
 
@@ -143,7 +161,7 @@ public class userpage extends AppCompatActivity {
 
 
 
-        String inStr = (nick_name != null) ? nick_name : user.getNick_name();
+        String inStr = (nick_name2 != null) ? nick_name2 : user.getNick_name();
         if (inStr != null)
             retrofitInterface.requestSearchUserNick(inStr).enqueue(new Callback<List<Capsule>>() {
 
@@ -164,6 +182,8 @@ public class userpage extends AppCompatActivity {
                             int state_temp = capsule.getStatus_temp();
                             int capsule_id = capsule.getCapsule_id();
                             int state_lock = capsule.getStatus_lock();
+                            int capsule_key_count = capsule.getKey_count();
+                            int capsule_used_key_count = capsule.getUsed_key_count();
                             String title = capsule.getTitle() != null ? capsule.getTitle() : "";
                             String url = capsule.getContent().size() != 0 ?
                                     capsule.getContent().get(0).getUrl() : Integer.toString(R.drawable.capsule_marker_angry);
@@ -172,6 +192,46 @@ public class userpage extends AppCompatActivity {
                             String opened_date = capsule.getDate_created();
                             String location = "Default";
                             String d_day = "0";
+                            /*List<String> members = capsule.getMembers();
+
+                            Log.d(TAG, "총 멤버들 : " + members.toString());*/
+                            if(capsule.getExpire() != null) {
+                                expire_date = capsule.getExpire();
+
+                                try {
+                                    // UTC -> LOCAL TIME
+                                    SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                    String created_utcDate = capsule.getDate_created();
+                                    Date crt_date = getLocalTime(created_utcDate);
+
+                                    String localDate = fm.format(crt_date);
+                                    created_date = localDate.substring(0, 4) + "년 " + localDate.substring(5, 7) +
+                                            "월 " + localDate.substring(8, 10) + "일 " + localDate.substring(11, 13) + "시";
+
+
+
+                                    String opened_utcDate = expire_date;
+                                    Date opn_date = getLocalTime(opened_utcDate);
+                                    localDate = fm.format(opn_date);
+                                    opened_date = localDate.substring(0, 4) + "년 " + localDate.substring(5, 7) +
+                                            "월 " + localDate.substring(8, 10) + "일 " + localDate.substring(11, 13) + "시";
+
+                                    Date date = new Date();
+
+                                    long diff = date.getTime() - opn_date.getTime();
+                                    if(diff > 0) {
+                                        lock_d_day = "D +" + Long.toString(diff / (1000 * 60 * 60 * 24));
+                                    } else {
+                                        lock_d_day = "D " + Long.toString(diff / (1000 * 60 * 60 * 24));
+                                    }
+                                    Log.d(TAG,"만료기간 디데이: " + d_day.toString());
+
+                                    //Log.d(TAG,created_date);
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
+                                    Log.d(TAG, "asdasd");
+                                }
+                            }
                             String text = capsule.getText();
                             int likes = capsule.getLikes();
                             // UTC Time control
@@ -225,10 +285,41 @@ public class userpage extends AppCompatActivity {
 
                             Log.d(TAG,url+" "+title+" "+created_date+" "+opened_date+" "+location+" "+state_temp);
 
-                            CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, d_day,
-                                    url, title, text,likes, "#절친 #평생친구", created_date,
-                                    opened_date, location, state_temp, state_lock, contentList);
-                            arrayList.add(capsuleLogData);
+                            int viewType = 0;
+
+                            if(state_temp == 0 && state_lock == 0){
+                                viewType = 0;
+
+                                CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, d_day,
+                                        url, title, text,likes, "#절친 #평생친구", created_date,
+                                        opened_date, location, state_temp, state_lock, contentList, viewType);
+                                arrayList.add(capsuleLogData);
+                            } else if(state_temp == 1 && state_lock == 0) {
+                                viewType = 1;
+
+                            } else if(state_lock == 1) {
+
+                                if(capsule_key_count == capsule_used_key_count){
+                                    viewType = 0;
+
+                                    CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, d_day,
+                                            url, title, text,likes, "#절친 #평생친구", created_date,
+                                            opened_date, location, state_temp, state_lock, contentList, viewType);
+                                    arrayList.add(capsuleLogData);
+                                } else {
+                                    List<String> members = capsule.getMembers();
+                                    for(int i =0; i < members.size(); i ++){
+                                    if(members.get(i).equals(nick_name)) {
+                                        viewType = 2;
+                                        Log.d(TAG,"멤버: " + members.get(i));
+                                        CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, d_day,
+                                                url, lock_d_day, text, likes, "#절친 #평생친구", created_date,
+                                                opened_date, location, state_temp, state_lock, contentList, 2);
+                                        arrayList.add(capsuleLogData);
+                                    }
+                                    }
+                                }
+                            }
                             userCapsuleLogAdapter.notifyDataSetChanged(); // redirect
                         }
                     }

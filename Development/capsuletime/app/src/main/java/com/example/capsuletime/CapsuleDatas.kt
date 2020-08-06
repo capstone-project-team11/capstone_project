@@ -55,7 +55,8 @@ data class CapsuleLogData (
         val tv_location: String,
         val state_temp: Int,
         val status_lock: Int,
-        val contentList: List<Content>?
+        val contentList: List<Content>?,
+        val viewType: Int
 )
 
 data class CapsuleLogData2 (
