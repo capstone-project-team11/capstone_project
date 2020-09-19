@@ -14,3 +14,6 @@
 
 -   ### 4th Report 2020 / 9 / 18
     #### [Dev_n_Test_4.md](https://github.com/capstone-project-team11/capstone_project/tree/master/Development/Dev_n_Test_Report/By_SW/Dev_n_Test_4.md)
+
+-   ### 5th Report 2020 / 9 / 20
+    #### [Dev_n_Test_5.md](https://github.com/capstone-project-team11/capstone_project/tree/master/Development/Dev_n_Test_Report/By_SW/Dev_n_Test_5.md)
