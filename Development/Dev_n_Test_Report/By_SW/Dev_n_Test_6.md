@@ -19,4 +19,4 @@
 
 - AR 테스트 결과 사진 (캡슐 확인하기 어려움)
 
-
+	![image](https://user-images.githubusercontent.com/48249549/93789497-e365f980-fc6c-11ea-8ab5-18c9b31bcaa3.png)
