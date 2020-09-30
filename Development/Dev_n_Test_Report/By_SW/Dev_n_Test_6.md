@@ -24,4 +24,5 @@
 ### 추가 테스트
 
 - 잠금 설정 뒤로가기 버튼 
+
 	![image](https://user-images.githubusercontent.com/48250370/94640002-79a6b900-0318-11eb-806f-b5475626dfb9.png)
