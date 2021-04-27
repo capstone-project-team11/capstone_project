@@ -1,5 +1,7 @@
 # 캡스톤디자인 작품명 : Capsule Time
 
+타임 캡슐을 모티브로한 위치기반 SNS 서비스
+
 ## 팀원과 역할
 - [김태완](./document/개인별자료/김태완/) - AR
 - [전승원](./document/개인별자료/전승원/) - Backend, Android
