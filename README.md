@@ -1,9 +1,15 @@
 # 캡스톤디자인 작품명 : Capsule Time
 
 ## 팀원과 역할
-- 김태완 - AR
-- 전승원 - Backend, Android
-- 박원진 - Android, 디자인
+- [김태완](./document/개인별자료/김태완/) - AR
+- [전승원](./document/개인별자료/전승원/) - Backend, Android
+- [박원진](./document/개인별자료/박원진/) - Android, 디자인
+
+## 코드 저장소
+
+- [Android App](./Development/capsuletime/)
+- [Backend](https://github.com/Err0rCode7/nodejs-httpserver)
+- [AR](./Development/unity_AR/)
 
 ## 작품 소개
 
