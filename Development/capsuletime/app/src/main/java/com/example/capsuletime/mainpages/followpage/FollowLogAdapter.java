@@ -96,7 +96,7 @@ public class FollowLogAdapter extends RecyclerView.Adapter<FollowLogAdapter.Foll
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(v.getContext(), userpage.class);
-                intent.putExtra("nick_name", arrayList.get(position).getNick_name());
+                intent.putExtra("nick_name2", arrayList.get(position).getNick_name());
                 intent.putExtra("user_id", arrayList.get(position).getName());
                 context.startActivity(intent);
             }
@@ -111,9 +111,13 @@ public class FollowLogAdapter extends RecyclerView.Adapter<FollowLogAdapter.Foll
                         @Override
                         public void onResponse(Call<Success> call, Response<Success> response) {
                             holder.iv_follow.setImageResource(R.drawable.follow_icon1);
+                            arrayList.get(position).setStatus_follow(1);
 
 
-                            notifyDataSetChanged();
+
+                            /*Glide.with(holder.itemView)
+                                    .load(R.drawable.follow_icon1)
+                                    .into(holder.iv_follow);*/
                         }
 
                         @Override
@@ -126,8 +130,10 @@ public class FollowLogAdapter extends RecyclerView.Adapter<FollowLogAdapter.Foll
                         @Override
                         public void onResponse(Call<Success> call, Response<Success> response) {
                             holder.iv_follow.setImageResource(R.drawable.follow_icon2);
-
-                            notifyDataSetChanged();
+                            arrayList.get(position).setStatus_follow(0);
+                            /*Glide.with(holder.itemView)
+                                    .load(R.drawable.follow_icon2)
+                                    .into(holder.iv_follow);*/
                         }
 
                         @Override
@@ -138,7 +144,6 @@ public class FollowLogAdapter extends RecyclerView.Adapter<FollowLogAdapter.Foll
                 }
             }
         });
-
     }
 
     @Override

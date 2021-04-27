@@ -81,6 +81,21 @@
             app:layout_constraintStart_toEndOf="@+id/imageView2"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/tv_d_day"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="8dp"
+            android:text="D -"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_location"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.45" />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/iv_delete_card"
             android:layout_width="wrap_content"
@@ -91,6 +106,7 @@
             android:layout_marginBottom="10dp"
             android:background="@android:color/transparent"
             android:shape="ring"
+            android:visibility="invisible"
             app:cardBackgroundColor="#FFFFFF"
             app:cardCornerRadius="50dp"
             app:cardElevation="0dp"
@@ -106,11 +122,27 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:clickable="true"
+                android:visibility="invisible"
                 app:srcCompat="@drawable/trash_bin" />
 
         </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/mypage_button"
+        android:layout_width="475dp"
+        android:layout_height="116dp"
+        android:layout_marginBottom="8dp"
+        android:scaleType="fitXY"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/text"
+        app:layout_constraintVertical_bias="1.0"
+        app:srcCompat="@drawable/modify_button3"
+        tools:ignore="VectorDrawableCompat" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -136,6 +168,21 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/location_white" />
 
+        <ImageView
+            android:id="@+id/iv_heart"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="620dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/tv_location"
+            app:layout_constraintHorizontal_bias="0.49"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/heart_icon" />
+
         <TextView
             android:id="@+id/tv_location"
             android:layout_width="276dp"
@@ -149,12 +196,27 @@
             android:ellipsize="end"
             android:singleLine="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/tv_d_day"
+            app:layout_constraintEnd_toStartOf="@+id/tv_d_day2"
             app:layout_constraintStart_toEndOf="@+id/iv_location"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0" />
 
         <TextView
+            android:id="@+id/tv_d_day2"
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="8dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_location"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="visible" />
+
+        <!--<TextView
             android:id="@+id/tv_d_day"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
@@ -166,7 +228,27 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/tv_location"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.45" />-->
+
+
+
+        <TextView
+            android:id="@+id/tv_likes"
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
+            android:text="24"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toEndOf="@+id/tv_location"
             app:layout_constraintTop_toTopOf="parent" />
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -177,7 +259,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/cl_location_bar">
 
-
         <TextView
             android:id="@+id/tv_text"
             android:layout_width="365dp"
@@ -187,6 +268,7 @@
             android:layout_marginTop="6dp"
             android:layout_marginEnd="20dp"
             android:layout_marginRight="20dp"
+            android:gravity="left|center"
             android:textColor="#000000"
             android:maxLines="5"
             android:lines="5"
@@ -195,6 +277,8 @@
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+
 
     <RelativeLayout
         android:layout_width="348dp"

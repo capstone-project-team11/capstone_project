@@ -84,6 +84,7 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
     private boolean firstFlag = false;
     private List<Integer> capsuleMarkerImageIdList;
     private int idCount = 0;
+    private int f4f = 0;
     private List<User> userList;
 
     @SuppressLint("MissingPermission")
@@ -269,6 +270,7 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
                                     Log.d(TAG,"server 404 Error");
                                     return;
                                 }
+                                f4f = 1;
                                 userList = response.body();
                                 resetClusterItem(false);
                                 refreshCamera();
@@ -298,6 +300,7 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
                                     Log.d(TAG,"server 404 Error");
                                     return;
                                 }
+                                f4f = 0;
                                 userList = response.body();
                                 resetClusterItem(false);
                                 refreshCamera();
@@ -327,6 +330,7 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
                                     Log.d(TAG,"server 404 Error");
                                     return;
                                 }
+                                f4f = 0;
                                 userList = response.body();
                                 resetClusterItem(false);
                                 refreshCamera();
@@ -368,6 +372,7 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
                                     Log.d(TAG,"server 404 Error");
                                     return;
                                 }
+                                f4f = 1;
                                 userList = response.body();
                                 resetClusterItem(false);
                                 refreshCamera();
@@ -397,6 +402,7 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
                                     Log.d(TAG,"server 404 Error");
                                     return;
                                 }
+                                f4f = 0;
                                 userList = response.body();
                                 resetClusterItem(false);
                                 refreshCamera();
@@ -426,6 +432,7 @@ public class capsulemap extends AppCompatActivity implements OnMapReadyCallback,
                                     Log.d(TAG,"server 404 Error");
                                     return;
                                 }
+                                f4f = 0;
                                 userList = response.body();
                                 resetClusterItem(false);
                                 refreshCamera();

@@ -164,12 +164,37 @@ interface RetrofitInterface {
             @Body setting: Setting
     ):Call<Success>
 
+    @PUT("/users/nick")
+    fun settingPassword(
+            @Body setting: SettingPassword
+    ):Call<Success>
+
+    @PUT("/users/nick")
+    fun settingNick(
+            @Body setting: SettingNick
+    ):Call<Success>
+
     @Multipart
     @PUT("/users/image")
     fun settingUser2(
             @Part("pre_nick_name") pre_nick_name: RequestBody,
             @Part("password") password: RequestBody,
             @Part("new_nick_name") new_nick_name: RequestBody,
+            @Part file: MultipartBody.Part
+    ):Call<Success>
+
+    @Multipart
+    @PUT("/users/image/nick")
+    fun settingUser3(
+            @Part("pre_nick_name") pre_nick_name: RequestBody,
+            @Part("new_nick_name") new_nick_name: RequestBody,
+            @Part file: MultipartBody.Part
+    ):Call<Success>
+
+    @Multipart
+    @PUT("/users/only/image")
+    fun settingImage(
+            @Part("nick_name") nick_name: RequestBody,
             @Part file: MultipartBody.Part
     ):Call<Success>
 

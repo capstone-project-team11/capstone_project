@@ -46,6 +46,8 @@ public class ViewCapsuleDialog {
     private CapsuleLogAdapter capsuleLogAdapter;
     private List<Uri> listUri;
     private int position;
+    private int comment;
+    private ArrayList<CapsuleLogData> arrayList;
     private ArrayList<Comment> arrayList2;
     private CommentLogAdapter commentLogAdapter;
     private List<User> userList;
@@ -57,19 +59,31 @@ public class ViewCapsuleDialog {
     private static final String TAG = "ViewCapsulePage";
 
 
-    public ViewCapsuleDialog (Context context, CapsuleLogData capsuleLogData, CapsuleLogAdapter CapsuleLogAdapter, int position){
+    public ViewCapsuleDialog (Context context, CapsuleLogData capsuleLogData, CapsuleLogAdapter CapsuleLogAdapter, int position, int comment){
         this.context = context;
         this.capsuleLogData = capsuleLogData;
         this.capsuleLogAdapter = capsuleLogAdapter;
         this.position = position;
+        this.comment = comment;
     }
 
 
     public void call() {
         final Dialog dlg = new Dialog(context);
 
+        Log.d(TAG, "캡슐 아이디 : " + capsuleLogData.getCapsule_id());
+
+        Log.d(TAG,"코멘트 : " + comment);
+
         //dlg.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dlg.setContentView(R.layout.dialog_view_capsule);
+
+        if(comment == 0){
+            dlg.setContentView(R.layout.dialog_view_capsule2);
+        } else if (comment == 1) {
+            dlg.setContentView(R.layout.dialog_view_capsule);
+        }
+
+        /*dlg.setContentView(R.layout.dialog_view_capsule);*/
         dlg.setCancelable(true);
 
         recyclerView = (RecyclerView)dlg.findViewById(R.id.rv);
@@ -84,15 +98,21 @@ public class ViewCapsuleDialog {
         RetrofitClient retrofitClient = new RetrofitClient(context);
         retrofitInterface = retrofitClient.retrofitInterface;
 
+
         TextView tv_title = (TextView) dlg.findViewById(R.id.tv_title);
         TextView tv_location = (TextView) dlg.findViewById(R.id.tv_location);
         TextView tv_text = (TextView) dlg.findViewById(R.id.tv_text);
         TextView tv_d_day = (TextView) dlg.findViewById(R.id.tv_d_day);
+        TextView tv_likes = (TextView) dlg.findViewById(R.id.tv_likes);
         ImageView iv_delete = (ImageView) dlg.findViewById(R.id.btn_delete);
 
         ViewPager viewPager = (ViewPager) dlg.findViewById(R.id.const_vp);
         TabLayout tabLayout = (TabLayout) dlg.findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(viewPager);
+
+        String likes = String.valueOf(capsuleLogData.getLikes());
+
+        tv_likes.setText(likes);
 
         listUri = new ArrayList<>();
 
@@ -102,8 +122,9 @@ public class ViewCapsuleDialog {
 
             if (capsuleLogData.getContentList().size() == 0){
 
-                uri = Uri.parse("android.resource://com.example.capsuletime/drawable/capsule_marker_yellow");
+                uri = Uri.parse("android.resource://com.example.capsuletime/drawable/no_image");
                 listUri.add(uri);
+
             } else {
                 for(int i = 0; i < capsuleLogData.getContentList().size(); i++){
                     uri = Uri.parse(capsuleLogData.getContentList().get(i).getUrl());
@@ -138,22 +159,27 @@ public class ViewCapsuleDialog {
                         String nick_name = commnetLogData.getNick_name();
                         String comment = commnetLogData.getComment();
                         String profile = commnetLogData.getUser_image_url();
+                        String day = commnetLogData.getDate_created();
+
+                        String day2 = day.substring(0,10);
 
                         if(replyies.isEmpty()){
 
-                            Comment commnet = new Comment(profile,nick_name,comment, replyies,0);
+                            Comment commnet = new Comment(profile,nick_name,comment,day2, replyies,0);
                             arrayList2.add(commnet);
 
                         }else{
 
-                            Comment commnet2 = new Comment(profile,nick_name,comment, replyies,0);
+                            Comment commnet2 = new Comment(profile,nick_name,comment,day2, replyies,0);
                             arrayList2.add(commnet2);
 
                             for(int j = 0; j < replyies.size(); j++) {
                                 String rp_nick_name = replyies.get(j).getNick_name();
                                 String rp_comment = replyies.get(j).getComment();
                                 String rp_profile = replyies.get(j).getUser_image_url();
-                                Comment comment3 = new Comment(rp_profile,rp_nick_name,rp_comment,commnetLogData.getReplies(),1);
+                                String rp_day = replyies.get(j).getDate_created();
+                                String rp_day2 = rp_day.substring(0,10);
+                                Comment comment3 = new Comment(rp_profile,rp_nick_name,rp_comment,rp_day2,commnetLogData.getReplies(),1);
                                 arrayList2.add(comment3);
                             }
                         }

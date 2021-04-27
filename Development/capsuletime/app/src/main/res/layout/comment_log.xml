@@ -5,17 +5,17 @@
     android:id="@+id/cl_capsule_frame"
     android:background="@android:color/transparent"
     android:layout_width="match_parent"
-    android:layout_height="42dp">
+    android:layout_height="70dp">
 
     <FrameLayout
         android:layout_width="411dp"
-        android:layout_height="53dp"
+        android:layout_height="0dp"
         tools:layout_editor_absoluteY="0dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_capsule"
-            android:layout_width="344dp"
-            android:layout_height="28dp"
+            android:layout_width="371dp"
+            android:layout_height="61dp"
             android:layout_marginLeft="35dp"
             android:layout_marginTop="7.5dp"
             android:layout_marginBottom="5dp"
@@ -27,18 +27,20 @@
 
             <TextView
                 android:id="@+id/tv_nick"
-                android:layout_width="77dp"
-                android:layout_height="14dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginLeft="16dp"
+                android:layout_width="88dp"
+                android:layout_height="20dp"
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:text="nick_name"
                 android:textColor="#404040"
                 android:textSize="12sp"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.08"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
 
             <TextView
                 android:id="@+id/tv_comment"
@@ -48,13 +50,29 @@
                 android:singleLine="true"
                 android:text="comment"
                 android:textColor="#404040"
-                android:textSize="12sp"
+                android:textSize="10sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.705"
+                app:layout_constraintHorizontal_bias="0.13"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.875" />
+                app:layout_constraintVertical_bias="0.515" />
+
+            <TextView
+                android:id="@+id/tv_day"
+                android:layout_width="198dp"
+                android:layout_height="20dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="2000.01.01"
+                android:textColor="#404040"
+                android:textSize="10sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.13"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="1.0" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -62,8 +80,9 @@
         <androidx.cardview.widget.CardView
             android:id="@+id/iv_thumb_card"
 
-            android:layout_width="40dp"
-            android:layout_height="40dp"
+            android:layout_width="45dp"
+            android:layout_height="46dp"
+            android:layout_marginTop="10dp"
             android:background="@android:color/transparent"
             android:shape="ring"
             app:cardBackgroundColor="@android:color/transparent"

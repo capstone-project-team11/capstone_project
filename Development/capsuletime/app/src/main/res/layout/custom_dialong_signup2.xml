@@ -11,7 +11,7 @@
         android:id="@+id/gallery"
         android:layout_width="match_parent"
         android:layout_height="62dp"
-        android:layout_marginBottom="1dp"
+        android:layout_marginBottom="4dp"
         android:background="#FF624D4D"
         android:clickable="true"
         app:layout_constraintBottom_toTopOf="@+id/camera"

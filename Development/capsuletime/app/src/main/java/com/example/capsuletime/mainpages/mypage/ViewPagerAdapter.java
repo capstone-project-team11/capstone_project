@@ -68,6 +68,7 @@ public class ViewPagerAdapter extends PagerAdapter {
                     .into(imageView);
             imageView.setBackgroundColor(Color.parseColor("#FFFFFF"));
 
+
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

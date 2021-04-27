@@ -7,11 +7,13 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -69,6 +71,7 @@ public class mypage extends AppCompatActivity {
     private String nick_name;
     private String url;
     private String lock_d_day;
+    private int lock_D_day;
     private int capsule_id;
     private ArrayList<CapsuleLogData> arrayList;
     private ArrayList<Comment> arrayList2;
@@ -80,6 +83,7 @@ public class mypage extends AppCompatActivity {
     private static final String TAG = "MyPage";
     private List<Capsule> capsuleList;
     private List<CommnetLogData> commentList;
+    private List<User> userList;
     private String drawablePath;
     private User user;
     private CommnetLogData commnetLogData;
@@ -107,8 +111,13 @@ public class mypage extends AppCompatActivity {
             count ++;
         }
 
+        Log.d(TAG,nick_name.toString() + "닉네임");
+
         ImageView iv_user = (ImageView) this.findViewById(R.id.user_image);
         TextView tv_nick = (TextView) this.findViewById(R.id.tv_nick);
+
+        TextView follow = (TextView) this.findViewById(R.id.follow2);
+        TextView follower = (TextView) this.findViewById(R.id.follower2);
 
         RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
@@ -152,7 +161,9 @@ public class mypage extends AppCompatActivity {
                             Glide
                                     .with(getApplicationContext())
                                     .load(user.getImage_url())
+                                    .circleCrop()
                                     .into(iv_user);
+
                         }
 
                     } else {
@@ -166,6 +177,48 @@ public class mypage extends AppCompatActivity {
                     Log.d(TAG, "server-get-user fail");
                 }
             });
+            String inStr = (nick_name != null) ? nick_name : user.getNick_name();
+            retrofitInterface.requestFollow(inStr).enqueue(new Callback<List<User>>() {
+                @Override
+                public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                    userList = response.body();
+                    if (userList != null) {
+                        int count = 0;
+                        for (User user : userList) {
+                            count++;
+                        }
+                        String count_follow = String.valueOf(count);
+                        follow.setText(count_follow);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<User>> call, Throwable t) {
+
+                }
+            });
+
+            String inStr2 = (nick_name != null) ? nick_name : user.getNick_name();
+            retrofitInterface.requestFollower(inStr2).enqueue(new Callback<List<User>>() {
+                @Override
+                public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                    userList = response.body();
+                    if (userList != null) {
+                        int count = 0;
+                        for (User user : userList) {
+                            count++;
+                        }
+                        String count_follow = String.valueOf(count);
+                        follower.setText(count_follow);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<User>> call, Throwable t) {
+
+                }
+            });
+
         }
 
 
@@ -247,9 +300,10 @@ public class mypage extends AppCompatActivity {
                             int state_lock = capsule.getStatus_lock();
                             int capsule_id = capsule.getCapsule_id();
                             int capsule_key_count = capsule.getKey_count();
+                            int capsule_key_used = capsule.getUsed_key_count();
                             String title = capsule.getTitle() != null ? capsule.getTitle() : "";
                             String url = capsule.getContent().size() != 0 ?
-                                    capsule.getContent().get(0).getUrl() : Integer.toString(R.drawable.capsule_marker_angry);
+                                    capsule.getContent().get(0).getUrl() : Integer.toString(R.drawable.no_image);
                             List<Content> contentList = capsule.getContent();
                             String created_date = capsule.getDate_created();
                             String opened_date = capsule.getDate_created();
@@ -279,12 +333,24 @@ public class mypage extends AppCompatActivity {
                                     Date date = new Date();
 
                                     long diff = date.getTime() - opn_date.getTime();
+
                                     if(diff > 0) {
                                         lock_d_day = "D +" + Long.toString(diff / (1000 * 60 * 60 * 24));
+                                        lock_D_day = 1;
+                                        if(diff / (1000 * 60 * 60 * 24) == 0){
+                                            lock_d_day = "D-Day";
+                                            lock_D_day = 1;
+                                        }
                                     } else {
-                                        lock_d_day = "D " + Long.toString(diff / (1000 * 60 * 60 * 24));
+                                        if(diff / (1000 * 60 * 60 * 24) == 0){
+                                            lock_d_day = "D-Day";
+                                            lock_D_day = 1;
+                                        } else {
+                                            lock_d_day = "D " + Long.toString(diff / (1000 * 60 * 60 * 24));
+                                            lock_D_day = 0;
+                                        }
                                     }
-                                    Log.d(TAG,"만료기간 디데이: " + d_day.toString());
+                                    Log.d(TAG,"만료기간 디데이: " + diff / (1000 * 60 * 60 * 24));
 
                                     //Log.d(TAG,created_date);
                                 } catch (ParseException e) {
@@ -365,19 +431,35 @@ public class mypage extends AppCompatActivity {
                                 arrayList.add(capsuleLogData);
                             } else if(state_lock == 1) {
 
-                                if(capsule_key_count == 0){
-                                    viewType = 0;
+                                if(capsule_key_count == capsule_key_used){
+                                    viewType = 4;
 
-                                    CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, d_day,
+                                    CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, lock_d_day,
                                             url, title, text,likes, "#절친 #평생친구", created_date,
                                             opened_date, location, state_temp, state_lock, contentList, viewType);
                                     arrayList.add(capsuleLogData);
                                 } else {
-                                    viewType = 2;
-                                    CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, d_day,
-                                            url, lock_d_day, text, likes, "#절친 #평생친구", created_date,
-                                            opened_date, location, state_temp, state_lock, contentList, 2);
-                                    arrayList.add(capsuleLogData);
+                                    if(lock_D_day == 1){
+                                        viewType = 3;
+
+                                        String u = String.valueOf(capsule_key_count);
+                                        String v = String.valueOf(capsule_key_used);
+                                        String key_count;
+                                        key_count =v + " / " + u;
+                                        Log.d(TAG, "키 카운트 : " + key_count.toString());
+
+                                        CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, d_day,
+                                                url, lock_d_day, key_count,likes, "#절친 #평생친구", created_date,
+                                                opened_date, location, state_temp, state_lock, contentList, viewType);
+                                        arrayList.add(capsuleLogData);
+                                    } else {
+
+                                        viewType = 2;
+                                        CapsuleLogData capsuleLogData = new CapsuleLogData(inStr, capsule_id, d_day,
+                                                url, lock_d_day, text, likes, "#절친 #평생친구", created_date,
+                                                opened_date, location, state_temp, state_lock, contentList, 2);
+                                        arrayList.add(capsuleLogData);
+                                    }
                                 }
                             }
 
@@ -392,7 +474,7 @@ public class mypage extends AppCompatActivity {
                     Log.d(TAG, "fail");
                 }
             });
-        Button imageButton = (Button) findViewById(R.id.button2);
+        ImageView imageButton = (ImageView) findViewById(R.id.capsule_map);
         imageButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -405,7 +487,7 @@ public class mypage extends AppCompatActivity {
             }
         });
 
-        Button imageButton2 = (Button) findViewById(R.id.button5);
+        TextView imageButton2 = (TextView) findViewById(R.id.follow);
         imageButton2.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -420,7 +502,7 @@ public class mypage extends AppCompatActivity {
             }
         });
 
-        Button imageButton3 = (Button) findViewById(R.id.button6);
+        TextView imageButton3 = (TextView) findViewById(R.id.follower);
         imageButton3.setOnClickListener(new View.OnClickListener() {
 
             @Override
@@ -435,7 +517,7 @@ public class mypage extends AppCompatActivity {
             }
         });
 
-        Button imageButton4 = (Button) findViewById(R.id.button7);
+        ImageView imageButton4 = (ImageView) findViewById(R.id.setting);
         imageButton4.setOnClickListener(new View.OnClickListener() {
 
             @Override

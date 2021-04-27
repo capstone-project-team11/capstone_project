@@ -107,7 +107,7 @@ public class ViewUserCapsuleDialog {
 
             if (capsuleLogData.getContentList().size() == 0){
 
-                uri = Uri.parse("android.resource://com.example.capsuletime/drawable/capsule_marker_yellow");
+                uri = Uri.parse("android.resource://com.example.capsuletime/drawable/no_image");
                 listUri.add(uri);
             } else {
                 for(int i = 0; i < capsuleLogData.getContentList().size(); i++){
@@ -154,22 +154,24 @@ public class ViewUserCapsuleDialog {
                         String nick_name = commnetLogData.getNick_name();
                         String comment = commnetLogData.getComment();
                         String profile = commnetLogData.getUser_image_url();
+                        String day = commnetLogData.getDate_created();
 
                         if(replyies.isEmpty()){
 
-                            Comment commnet = new Comment(profile,nick_name,comment, replyies,0);
+                            Comment commnet = new Comment(profile,nick_name,comment,day, replyies,0);
                             arrayList2.add(commnet);
 
                         }else{
 
-                            Comment commnet2 = new Comment(profile,nick_name,comment, replyies,0);
+                            Comment commnet2 = new Comment(profile,nick_name,comment,day, replyies,0);
                             arrayList2.add(commnet2);
 
                             for(int j = 0; j < replyies.size(); j++) {
                                 String rp_nick_name = replyies.get(j).getNick_name();
                                 String rp_comment = replyies.get(j).getComment();
                                 String rp_profile = replyies.get(j).getUser_image_url();
-                                Comment comment3 = new Comment(rp_profile,rp_nick_name,rp_comment,commnetLogData.getReplies(),1);
+                                String rp_day = replyies.get(j).getDate_created();
+                                Comment comment3 = new Comment(rp_profile,rp_nick_name,rp_comment,rp_day,commnetLogData.getReplies(),1);
                                 arrayList2.add(comment3);
                             }
                         }

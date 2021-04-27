@@ -109,7 +109,7 @@ public class settingpage extends AppCompatActivity {
         nick_name = intent.getStringExtra("nick_name");
         image_url = intent.getStringExtra("image_url");
 
-        Button bt_upload_picture = (Button) this.findViewById(R.id.bt_profile);
+        CardView cv_upload_picture = (CardView) this.findViewById(R.id.btn_UploadPicture);
         Button btn_finish = (Button) this.findViewById(R.id.button7);
 
         RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
@@ -246,7 +246,7 @@ public class settingpage extends AppCompatActivity {
         });
 
 
-        bt_upload_picture.setOnClickListener(new View.OnClickListener() {
+        cv_upload_picture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 

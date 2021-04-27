@@ -8,8 +8,18 @@ public class Comment {
     private String profile;
     private String nick_name;
     private String comment;
+    private String day;
     private List<Commnetwo> replies;
     private int viewtype;
+
+    public Comment(String profile, String nick_name, String comment, String day, List<Commnetwo> replies, int viewtype) {
+        this.profile = profile;
+        this.nick_name = nick_name;
+        this.comment = comment;
+        this.day = day;
+        this.replies = replies;
+        this.viewtype = viewtype;
+    }
 
     public String getProfile() {
         return profile;
@@ -35,6 +45,14 @@ public class Comment {
         this.comment = comment;
     }
 
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
+    }
+
     public List<Commnetwo> getReplies() {
         return replies;
     }
@@ -48,14 +66,6 @@ public class Comment {
     }
 
     public void setViewtype(int viewtype) {
-        this.viewtype = viewtype;
-    }
-
-    public Comment(String profile, String nick_name, String comment, List<Commnetwo> replies, int viewtype) {
-        this.profile = profile;
-        this.nick_name = nick_name;
-        this.comment = comment;
-        this.replies = replies;
         this.viewtype = viewtype;
     }
 }

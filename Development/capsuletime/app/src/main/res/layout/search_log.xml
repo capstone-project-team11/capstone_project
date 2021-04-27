@@ -8,15 +8,19 @@
     android:layout_height="80dp">
 
     <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_capsule"
             android:layout_width="320dp"
             android:layout_height="68dp"
             android:layout_marginTop="7.5dp"
-            android:layout_marginLeft="60dp"
+            android:layout_marginLeft="30dp"
             android:layout_marginBottom="5dp"
 
             android:background="@drawable/radius_capsule_log">
@@ -53,18 +57,6 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="1.0" />
 
-            <ImageView
-                android:id="@+id/follow"
-                android:layout_width="82dp"
-                android:layout_height="57dp"
-                android:layout_gravity="center_vertical"
-                android:clickable="true"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.932"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.545" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -72,8 +64,6 @@
             android:id="@+id/iv_thumb_card"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="26dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginTop="13dp"
             android:layout_marginEnd="24dp"
             android:layout_marginRight="24dp"

@@ -35,7 +35,9 @@ import com.example.capsuletime.CapsuleOneOfAll;
 import com.example.capsuletime.R;
 import com.example.capsuletime.RetrofitClient;
 import com.example.capsuletime.RetrofitInterface;
+import com.example.capsuletime.Success;
 import com.example.capsuletime.User;
+import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
 import com.example.capsuletime.login.login;
 import com.example.capsuletime.mainpages.ar.UnityPlayerActivity;
 import com.example.capsuletime.mainpages.capsulemap.CapsuleMark;
@@ -44,6 +46,7 @@ import com.example.capsuletime.mainpages.followpage.followerpage;
 import com.example.capsuletime.mainpages.followpage.followpage;
 import com.example.capsuletime.mainpages.mypage.mypage;
 import com.example.capsuletime.mainpages.mypage.mypage_map;
+import com.example.capsuletime.mainpages.mypage.setting.settingpage;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -66,6 +69,7 @@ import com.gun0912.tedpermission.TedPermission;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -79,9 +83,12 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
     private static final String TAG = "capsulemap";
     private String user_id;
     private String nick_name;
+    private String nick_name2;
     private User user;
+    private int follow_status;
     private RetrofitInterface retrofitInterface;
     private List<Capsule> capsuleList;
+    private List<User> userList;
     private String drawablePath;
     private GoogleMap mMap;
     private double longitude;
@@ -103,12 +110,36 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
         Intent intent = getIntent();
         user = intent.getParcelableExtra("user");
         user_id = intent.getStringExtra("user_id");
-        nick_name = intent.getStringExtra("nick_name");
+        nick_name2 = intent.getStringExtra("nick_name2");
 
         idCount = 0;
-
         ImageView iv_user = (ImageView) this.findViewById(R.id.user_image);
         TextView tv_id = (TextView) this.findViewById(R.id.tv_nick);
+
+        TextView follow = (TextView) this.findViewById(R.id.follow2);
+        TextView follower = (TextView) this.findViewById(R.id.follower2);
+
+        ImageView imageView1 = (ImageView) findViewById(R.id.setting);
+        imageView1.setImageResource(R.drawable.userpage_follow_botton);
+
+        NickNameSharedPreferences nickNameSharedPreferences = NickNameSharedPreferences.getInstanceOf(getApplicationContext());
+        HashSet<String> nickNameSharedPrefer = (HashSet<String>) nickNameSharedPreferences.getHashSet(
+                NickNameSharedPreferences.NICKNAME_SHARED_PREFERENCES_KEY,
+                new HashSet<String>()
+        );
+        int count = 0;
+        for (String nick : nickNameSharedPrefer) {
+            if (count == 0){
+                nick_name = nick;
+            }
+            count ++;
+        }
+
+        if(nick_name2.equals(nick_name)){
+            imageView1.setVisibility(View.INVISIBLE);
+        } else {
+            imageView1.setImageResource(R.drawable.userpage_follow_botton);
+        }
 
         if(user_id != null)
             tv_id.setText(user_id);
@@ -130,7 +161,7 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
         final LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
         if(user == null) {
-            retrofitInterface.requestSearchUser(nick_name).enqueue(new Callback<User>() {
+            retrofitInterface.requestSearchUser(nick_name2).enqueue(new Callback<User>() {
                 @Override
                 public void onResponse(Call<User> call, Response<User> response) {
 
@@ -151,10 +182,11 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
                             Glide
                                     .with(getApplicationContext())
                                     .load(user.getImage_url())
+                                    .circleCrop()
                                     .into(iv_user);
                         }
 
-                        tv_id.setText(user.getUser_id());
+                        tv_id.setText(user.getNick_name());
                     } else {
                         iv_user.setImageResource(R.drawable.user);
                         tv_id.setText("서버통신오류");
@@ -183,28 +215,28 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
                 tv_id.setText(user.getUser_id());
         }
 
-        Button imageButton = (Button) findViewById(R.id.button);
+        ImageView imageButton = (ImageView) findViewById(R.id.capsule);
         imageButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), userpage.class);
                 intent.putExtra("nick_name2", user.getNick_name());
-                intent.putExtra("user_id", user_id);
                 Log.d(TAG, user.toString());
+                finish();
                 startActivity(intent);
                 overridePendingTransition(0, 0);
-                finish();
             }
         });
 
-        Button imageButton2 = (Button) findViewById(R.id.button5);
-        imageButton2.setOnClickListener(new View.OnClickListener() {
+        TextView imageButton10 = (TextView) findViewById(R.id.follow);
+        imageButton10.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), followpage.class);
                 intent.putExtra("nick_name", user.getNick_name());
+                intent.putExtra("user_id", user_id);
                 intent.putExtra("user", user);
                 Log.d(TAG, user.toString());
                 startActivity(intent);
@@ -212,13 +244,14 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        Button imageButton3 = (Button) findViewById(R.id.button6);
+        TextView imageButton3 = (TextView) findViewById(R.id.follower);
         imageButton3.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), followerpage.class);
                 intent.putExtra("nick_name", user.getNick_name());
+                intent.putExtra("user_id", user_id);
                 intent.putExtra("user", user);
                 Log.d(TAG, user.toString());
                 startActivity(intent);
@@ -226,14 +259,221 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
             }
         });
 
-        Button imageButton4 = (Button) findViewById(R.id.button4);
-        imageButton4.setOnClickListener(new View.OnClickListener() {
+
+
+        Button imageButton5 = (Button) findViewById(R.id.button4);
+        imageButton5.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
+
+
+        if(nick_name2 != null){
+            tv_id.setText(nick_name2);
+
+            retrofitInterface.requestFollow(nick_name2).enqueue(new Callback<List<User>>() {
+                @Override
+                public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                    userList = response.body();
+                    Log.d(TAG, userList.toString());
+                    if (userList != null) {
+                        for (User user : userList) {
+                            String nick_name3 = user.getNick_name();
+                            Log.d(TAG,"닉넴 : " + nick_name3.toString());
+                            if(nick_name.equals(nick_name3)) {
+                                ImageView imageView1 = (ImageView) findViewById(R.id.setting);
+                                imageView1.setImageResource(R.drawable.userpage_follow_botton2);
+                            }
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<User>> call, Throwable t) {
+
+                }
+            });
+
+            ImageView imageButton2 = (ImageView) findViewById(R.id.setting);
+            imageButton2.setOnClickListener(new View.OnClickListener() {
+
+                @Override
+                public void onClick(View view) {
+                    String inStr = (nick_name != null) ? nick_name : user.getNick_name();
+                    retrofitInterface.requestFollow(inStr).enqueue(new Callback<List<User>>() {
+                        @Override
+                        public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                            userList = response.body();
+                            Log.d(TAG, userList.toString());
+                            if (userList != null) {
+                                for (User user : userList) {
+                                    String nick_name3 = user.getNick_name();
+                                    if(nick_name2.equals(nick_name3)){
+                                        follow_status = 1;
+                                    } else {
+                                        follow_status = 0;
+                                    }
+                                    if(follow_status == 1) {
+                                        retrofitInterface.requestDeleteFollow(nick_name,nick_name2).enqueue(new Callback<Success>() {
+                                            @Override
+                                            public void onResponse(Call<Success> call, Response<Success> response) {
+                                                ImageView imageView1 = (ImageView) findViewById(R.id.setting);
+                                                imageView1.setImageResource(R.drawable.userpage_follow_botton);
+                                                retrofitInterface.requestFollower(nick_name2).enqueue(new Callback<List<User>>() {
+                                                    @Override
+                                                    public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                                                        userList = response.body();
+                                                        Log.d(TAG, userList.toString());
+                                                        if (userList != null) {
+                                                            int count = 0;
+                                                            for (User user : userList) {
+                                                                count++;
+                                                            }
+                                                            follow_status = 0;
+                                                            String count_follow = String.valueOf(count);
+                                                            follower.setText(count_follow);
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<List<User>> call, Throwable t) {
+
+                                                    }
+                                                });
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<Success> call, Throwable t) {
+                                                Toast.makeText(view.getContext(), "삭제를 실패했습니다.",Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    } else {
+                                        retrofitInterface.requestCreateFollow(nick_name,nick_name2).enqueue(new Callback<Success>() {
+                                            @Override
+                                            public void onResponse(Call<Success> call, Response<Success> response) {
+                                                ImageView imageView1 = (ImageView) findViewById(R.id.setting);
+                                                imageView1.setImageResource(R.drawable.userpage_follow_botton2);
+                                                retrofitInterface.requestFollower(nick_name2).enqueue(new Callback<List<User>>() {
+                                                    @Override
+                                                    public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                                                        userList = response.body();
+                                                        Log.d(TAG, userList.toString());
+                                                        if (userList != null) {
+                                                            int count = 0;
+                                                            for (User user : userList) {
+                                                                count++;
+                                                            }
+                                                            follow_status = 1;
+                                                            String count_follow = String.valueOf(count);
+                                                            follower.setText(count_follow);
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onFailure(Call<List<User>> call, Throwable t) {
+
+                                                    }
+                                                });
+                                            }
+
+                                            @Override
+                                            public void onFailure(Call<Success> call, Throwable t) {
+                                                Toast.makeText(view.getContext(), "삭제를 실패했습니다.",Toast.LENGTH_SHORT).show();
+                                            }
+                                        });
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(Call<List<User>> call, Throwable t) {
+
+                        }
+                    });
+                }
+            });
+
+            retrofitInterface.requestSearchUser(nick_name2).enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+
+                    if (response.code() == 401) {
+                        Intent intent = new Intent(getApplicationContext(), login.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        startActivity(intent);
+                    }
+
+                    user = response.body();
+                    if (user != null) {
+                        if(user.getImage_url() == null || Objects.equals(user.getImage_url(), "")){
+                            Log.d(TAG,"url null");
+                            iv_user.setImageResource(R.drawable.user);
+                        } else {
+                            Log.d(TAG,"url not null");
+                            Glide
+                                    .with(getApplicationContext())
+                                    .load(user.getImage_url())
+                                    .circleCrop()
+                                    .into(iv_user);
+                        }
+                    } else {
+                        iv_user.setImageResource(R.drawable.user);
+                        tv_id.setText("서버통신오류");
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
+                    Log.d(TAG, "server-get-user fail");
+                }
+            });
+            retrofitInterface.requestFollow(nick_name2).enqueue(new Callback<List<User>>() {
+                @Override
+                public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                    userList = response.body();
+                    Log.d(TAG, userList.toString());
+                    if (userList != null) {
+                        int count = 0;
+                        for (User user : userList) {
+                            count++;
+                        }
+                        String count_follow = String.valueOf(count);
+                        follow.setText(count_follow);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<User>> call, Throwable t) {
+
+                }
+            });
+            retrofitInterface.requestFollower(nick_name2).enqueue(new Callback<List<User>>() {
+                @Override
+                public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                    userList = response.body();
+                    Log.d(TAG, userList.toString());
+                    if (userList != null) {
+                        int count = 0;
+                        for (User user : userList) {
+                            count++;
+                        }
+                        String count_follow = String.valueOf(count);
+                        follower.setText(count_follow);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<User>> call, Throwable t) {
+
+                }
+            });
+        }
+
 
 
         if (Build.VERSION.SDK_INT >= 23 &&
@@ -360,7 +600,7 @@ public class userpage_map extends AppCompatActivity implements OnMapReadyCallbac
 
         mMap.moveCamera(CameraUpdateFactory.zoomTo(10));
 
-        String inStr = (nick_name != null) ? nick_name : user.getNick_name();
+        String inStr = (nick_name2 != null) ? nick_name2 : user.getNick_name();
         if (inStr != null)
         retrofitInterface.requestSearchUserNick(inStr).enqueue(new Callback<List<Capsule>>() {
             @Override

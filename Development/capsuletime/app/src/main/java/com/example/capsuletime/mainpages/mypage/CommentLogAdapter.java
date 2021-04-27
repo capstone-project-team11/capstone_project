@@ -67,6 +67,7 @@ public class CommentLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             ((CommentViewHolder) holder).tv_nick.setText(arrayList.get(position).getNick_name());
             ((CommentViewHolder) holder).tv_comment.setText(arrayList.get(position).getComment());
+            ((CommentViewHolder) holder).tv_day.setText(arrayList.get(position).getDay());
 
 
 
@@ -80,6 +81,7 @@ public class CommentLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
             ((RepliesViewHolder) holder).tv_nick.setText(arrayList.get(position).getNick_name());
             ((RepliesViewHolder) holder).tv_comment.setText(arrayList.get(position).getComment());
+            ((RepliesViewHolder) holder).tv_day.setText(arrayList.get(position).getDay());
 
         }
 
@@ -101,6 +103,7 @@ public class CommentLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         protected ImageView iv_profile;
         protected TextView tv_nick;
         protected TextView tv_comment;
+        protected TextView tv_day;
 
 
         public CommentViewHolder(@NonNull View itemView) {
@@ -108,6 +111,7 @@ public class CommentLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             this.iv_profile = itemView.findViewById(R.id.iv_profile);
             this.tv_nick = itemView.findViewById(R.id.tv_nick);
             this.tv_comment = itemView.findViewById(R.id.tv_comment);
+            this.tv_day = itemView.findViewById(R.id.tv_day);
         }
     }
 
@@ -116,12 +120,14 @@ public class CommentLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         protected ImageView iv_profile;
         protected TextView tv_nick;
         protected TextView tv_comment;
+        protected TextView tv_day;
 
         public RepliesViewHolder(@NonNull View itemView) {
             super(itemView);
             this.iv_profile = itemView.findViewById(R.id.iv_profile);
             this.tv_nick = itemView.findViewById(R.id.tv_nick);
             this.tv_comment = itemView.findViewById(R.id.tv_comment);
+            this.tv_day = itemView.findViewById(R.id.tv_day);
         }
     }
 

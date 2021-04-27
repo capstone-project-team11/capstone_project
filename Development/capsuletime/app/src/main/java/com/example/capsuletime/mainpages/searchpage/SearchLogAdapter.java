@@ -77,7 +77,7 @@ public class SearchLogAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(v.getContext(), userpage.class);
-                    intent.putExtra("nick_name", arrayList.get(position).getNick_name());
+                    intent.putExtra("nick_name2", arrayList.get(position).getNick_name());
                     intent.putExtra("user_id", arrayList.get(position).getUser_id());
                     context.startActivity(intent);
                 }

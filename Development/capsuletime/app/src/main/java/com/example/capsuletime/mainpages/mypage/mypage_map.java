@@ -82,6 +82,7 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
     private User user;
     private RetrofitInterface retrofitInterface;
     private List<Capsule> capsuleList;
+    private List<User> userList;
     private String drawablePath;
     private GoogleMap mMap;
     private double longitude;
@@ -102,6 +103,9 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
 
         ImageView iv_user = (ImageView) this.findViewById(R.id.user_image);
         TextView tv_nick = (TextView) this.findViewById(R.id.tv_nick);
+
+        TextView follow = (TextView) this.findViewById(R.id.follow2);
+        TextView follower = (TextView) this.findViewById(R.id.follower2);
 
         TedPermission.with(getApplicationContext())
                 .setPermissionListener(permissionListener)
@@ -155,6 +159,7 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
                             Glide
                                     .with(getApplicationContext())
                                     .load(user.getImage_url())
+                                    .circleCrop()
                                     .into(iv_user);
                         }
 
@@ -170,55 +175,103 @@ public class mypage_map extends AppCompatActivity implements OnMapReadyCallback,
                     Log.d(TAG, "server-get-user fail");
                 }
             });
+            String inStr = (nick_name != null) ? nick_name : user.getNick_name();
+            retrofitInterface.requestFollow(inStr).enqueue(new Callback<List<User>>() {
+                @Override
+                public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                    userList = response.body();
+                    Log.d(TAG, userList.toString());
+                    if (userList != null) {
+                        int count = 0;
+                        for (User user : userList) {
+                            count++;
+                        }
+                        String count_follow = String.valueOf(count);
+                        follow.setText(count_follow);
+                    }
+                }
 
+                @Override
+                public void onFailure(Call<List<User>> call, Throwable t) {
+
+                }
+            });
+
+            String inStr2 = (nick_name != null) ? nick_name : user.getNick_name();
+            retrofitInterface.requestFollower(inStr2).enqueue(new Callback<List<User>>() {
+                @Override
+                public void onResponse(Call<List<User>> call, Response<List<User>> response) {
+                    userList = response.body();
+                    Log.d(TAG, userList.toString());
+                    if (userList != null) {
+                        int count = 0;
+                        for (User user : userList) {
+                            count++;
+                        }
+                        String count_follow = String.valueOf(count);
+                        follower.setText(count_follow);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<List<User>> call, Throwable t) {
+
+                }
+            });
 
         }
 
-        Button imageButton = (Button) findViewById(R.id.button);
+        ImageView imageButton = (ImageView) findViewById(R.id.capsule);
         imageButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), mypage.class);
                 intent.putExtra("nick_name", user.getNick_name());
-                intent.putExtra("user_id", user_id);
                 Log.d(TAG, user.toString());
                 startActivity(intent);
                 overridePendingTransition(0, 0);
             }
         });
 
-        Button imageButton2 = (Button) findViewById(R.id.button5);
+        TextView imageButton2 = (TextView) findViewById(R.id.follow);
         imageButton2.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), followpage.class);
                 intent.putExtra("nick_name", user.getNick_name());
+                intent.putExtra("user_id", user_id);
+                intent.putExtra("user", user);
+                Log.d(TAG, user.toString());
                 startActivity(intent);
                 overridePendingTransition(0, 0);
             }
         });
 
-        Button imageButton3 = (Button) findViewById(R.id.button6);
+        TextView imageButton3 = (TextView) findViewById(R.id.follower);
         imageButton3.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), followerpage.class);
                 intent.putExtra("nick_name", user.getNick_name());
+                intent.putExtra("user_id", user_id);
+                intent.putExtra("user", user);
+                Log.d(TAG, user.toString());
                 startActivity(intent);
                 overridePendingTransition(0, 0);
             }
         });
 
-        Button imageButton4 = (Button) findViewById(R.id.button7);
+        ImageView imageButton4 = (ImageView) findViewById(R.id.setting);
         imageButton4.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), settingpage.class);
                 intent.putExtra("nick_name", user.getNick_name());
+                intent.putExtra("user_id", user.getUser_id());
                 intent.putExtra("image_url", user.getImage_url());
                 Log.d(TAG, user.toString());
                 startActivity(intent);

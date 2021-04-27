@@ -59,6 +59,13 @@ data class CapsuleLogData (
         val viewType: Int
 )
 
+data class CapsuleLockSettingLogData (
+
+        val tv_title: String,
+        val viewType: Int
+
+)
+
 data class CapsuleLogData2 (
         val user_id: String,
         val capsule_id: Int,
@@ -103,9 +110,12 @@ data class FollowLogData (
         val status_follow: Int
 )
 
+
+
 data class User(
         var user_id: String?,
         var nick_name: String?,
+        var dest_nick_name: String?,
         var first_name: String?,
         var last_name: String?,
         var email_id: String?,
@@ -116,6 +126,7 @@ data class User(
         var image_name: String?) : Parcelable {
 
     constructor(parcel: Parcel) : this(
+            parcel.readString() ?: "",
             parcel.readString() ?: "",
             parcel.readString() ?: "",
             parcel.readString() ?: "",
@@ -157,6 +168,21 @@ data class User(
 data class Setting(
         var pre_nick_name: String,
         var password: String,
+        var new_nick_name: String
+)
+
+data class SettingNick(
+        var pre_nick_name: String,
+        var new_nick_name: String
+)
+
+data class SettingPassword(
+        var nick_name: String,
+        var password: String
+)
+
+data class Setting_only_image(
+        var nick_name: String,
         var new_nick_name: String
 )
 

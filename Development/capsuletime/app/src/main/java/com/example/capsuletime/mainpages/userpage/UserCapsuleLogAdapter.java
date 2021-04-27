@@ -52,7 +52,7 @@ public class UserCapsuleLogAdapter extends RecyclerView.Adapter<RecyclerView.Vie
 
 
         if (viewType == 0) {
-            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_capsule_log,parent,false);
+            view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_user_capsule_log,parent,false);
             return new CapsuleViewHolder(view);
         } else if (viewType == 1) { // (viewType == 1)
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_capsule_temp_log,parent,false);

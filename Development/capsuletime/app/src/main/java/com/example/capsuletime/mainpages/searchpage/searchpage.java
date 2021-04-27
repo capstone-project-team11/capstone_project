@@ -229,9 +229,9 @@ public class searchpage extends AppCompatActivity {
                             arrayList.add(search);
                             searchLogAdapter.notifyDataSetChanged(); // redirect
                         }
-                        }
                     }
                 }
+            }
 
 
             @Override
@@ -325,17 +325,17 @@ public class searchpage extends AppCompatActivity {
 
                         if(text != null && text.contains("#") && text.contains(query)) {
                             if(query.isEmpty() || query.equals("")){arrayList.clear();}
-                             if (hashtag != null && query == hashtag)  {
-                                    if(query.isEmpty() || query.equals("")){arrayList.clear();}
-                                    com.example.capsuletime.mainpages.searchpage.User hashTag3 = new com.example.capsuletime.mainpages.searchpage.User("", "", nick_name,text, "", 2);
-                                    arrayList.add(hashTag3);
-                                    searchLogAdapter.notifyDataSetChanged();
-                                }
+                            if (hashtag != null && query == hashtag)  {
+                                if(query.isEmpty() || query.equals("")){arrayList.clear();}
+                                com.example.capsuletime.mainpages.searchpage.User hashTag3 = new com.example.capsuletime.mainpages.searchpage.User("", "", nick_name,text, "", 2);
+                                arrayList.add(hashTag3);
+                                searchLogAdapter.notifyDataSetChanged();
                             }
                         }
-
                     }
+
                 }
+            }
 
 
 

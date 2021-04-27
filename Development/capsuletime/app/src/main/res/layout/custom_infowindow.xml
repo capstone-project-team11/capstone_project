@@ -36,17 +36,20 @@
 
     <Button
         android:id="@+id/button3"
-        style="@style/Widget.AppCompat.Button.Borderless"
-        android:layout_width="184dp"
-        android:layout_height="wrap_content"
+        android:layout_width="266dp"
+        android:layout_height="67dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="217dp"
-        android:layout_marginRight="217dp"
-        android:layout_marginBottom="19dp"
-        android:visibility="visible"
-        tools:visibility="visible" />
+        android:layout_marginEnd="135dp"
+        android:layout_marginRight="135dp"
+        android:layout_marginBottom="0dp"
+        android:background="#00ff0000"
+        android:textColor="#F8F4F4"
+        android:visibility="visible" />
 
     <androidx.cardview.widget.CardView
         android:layout_width="60dip"
@@ -79,7 +82,7 @@
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
         android:layout_marginStart="110dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="13dp"
         android:layout_marginEnd="60dp"
         android:layout_marginRight="60dp"
         android:layout_marginBottom="15dp"
@@ -98,7 +101,7 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true"
         android:layout_marginStart="110dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="37dp"
         android:layout_marginEnd="40dp"
         android:layout_marginRight="40dp"
         android:layout_marginBottom="10dp"

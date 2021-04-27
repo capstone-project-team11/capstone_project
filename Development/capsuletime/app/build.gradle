@@ -50,6 +50,7 @@ android {
 
     packagingOptions {
         doNotStrip '*/armeabi-v7a/*.so'
+        doNotStrip '*/arm64-v8a/*.so'
         doNotStrip '*/x86/*.so'
     }
 
@@ -101,6 +102,7 @@ dependencies {
     implementation 'jp.wasabeef:glide-transformations:4.1.0'
     // If you want to use the GPU Filters
     implementation 'jp.co.cyberagent.android:gpuimage:2.0.0'
+    implementation 'de.hdodenhof:circleimageview:3.0.0'
 
     // googlemap
     implementation 'com.google.android.gms:play-services-maps:17.0.0'

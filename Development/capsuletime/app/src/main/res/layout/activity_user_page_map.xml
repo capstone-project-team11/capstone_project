@@ -2,7 +2,7 @@
 <androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@drawable/mypage_bg"
+    android:background="#ececec"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -10,126 +10,173 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_height="195dp">
 
         <TextView
             android:id="@+id/tv_nick"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="196dp"
-            android:layout_marginLeft="196dp"
-            android:layout_marginEnd="196dp"
-            android:layout_marginRight="196dp"
-            android:layout_marginBottom="68dp"
-            android:text="id0"
-            android:textColor="@color/colorPrimaryDark"
-            android:textSize="10pt"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_width="163dp"
+            android:layout_height="35dp"
+            android:clickable="true"
+            android:gravity="left"
+            android:text="nick_name"
+            android:textColor="#000000"
+            android:textSize="24sp"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/mypage_button"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.538"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintHorizontal_bias="0.81"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.289"
+            tools:visibility="visible" />
 
-        <androidx.cardview.widget.CardView
+        <ImageView
+            android:id="@+id/user_image"
+            android:layout_width="84dp"
+            android:layout_height="86dp"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toTopOf="@+id/mypage_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.275"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/user_no_image"
+            tools:ignore="VectorDrawableCompat" />
 
-            android:id="@+id/cardView"
-            android:layout_width="44dp"
+        <TextView
+            android:id="@+id/follow"
+            android:layout_width="66dp"
+            android:layout_height="30dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="팔로우"
+            android:textColor="#000000"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/mypage_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.544"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.507"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/follower"
+            android:layout_width="66dp"
+            android:layout_height="30dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="팔로워"
+            android:textColor="#000000"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/mypage_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.736"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.515"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/follow2"
+            android:layout_width="59dp"
+            android:layout_height="26dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="#000000"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/mypage_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.534"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.73"
+            tools:visibility="visible" />
+
+        <TextView
+            android:id="@+id/follower2"
+            android:layout_width="61dp"
+            android:layout_height="27dp"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="0"
+            android:textColor="#000000"
+            android:visibility="visible"
+            app:layout_constraintBottom_toTopOf="@+id/mypage_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.74"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.736"
+            tools:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/setting"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:clickable="true"
+            app:layout_constraintBottom_toTopOf="@+id/mypage_button"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.98"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.04000002"
+            app:srcCompat="@drawable/userpage_follow_botton" />
+
+        <ImageView
+            android:id="@+id/mypage_button"
+            android:layout_width="498dp"
             android:layout_height="44dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginStart="4dp"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="49dp"
-            android:layout_marginEnd="1dp"
-            android:layout_marginRight="1dp"
-            android:background="@android:color/transparent"
-            android:innerRadius="0dp"
-            android:shape="ring"
-            app:cardBackgroundColor="@android:color/transparent"
-            app:cardCornerRadius="50dp"
-            app:cardElevation="0dp"
-            app:cardPreventCornerOverlap="true"
-            app:cardUseCompatPadding="false"
-            app:contentPadding="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/tv_nick"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.146">
-
-            <ImageView
-                android:id="@+id/user_image"
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:scaleType="fitXY"
-                app:srcCompat="@drawable/user_no_image"
-                tools:ignore="VectorDrawableCompat" />
-        </androidx.cardview.widget.CardView>
-
-
-        <Button
-            android:id="@+id/button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="캡슐"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/button2"
-            app:layout_constraintHorizontal_bias="0.355"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.828" />
-
-
-        <Button
-            android:id="@+id/button2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="지도"
+            android:scaleType="fitXY"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.777"
+            app:layout_constraintHorizontal_bias="0.505"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.828" />
+            app:layout_constraintVertical_bias="1.0"
+            app:srcCompat="@drawable/mypage_button"
+            tools:ignore="VectorDrawableCompat" />
+
+        <ImageView
+            android:id="@+id/capsule"
+            android:layout_width="35dp"
+            android:layout_height="37dp"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.26"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.98"
+            app:srcCompat="@drawable/mypage_capsule2"
+            tools:ignore="VectorDrawableCompat" />
+
+        <ImageView
+            android:id="@+id/capsule_map"
+            android:layout_width="35dp"
+            android:layout_height="37dp"
+            android:scaleType="fitXY"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.728"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.98"
+            app:srcCompat="@drawable/mypage_capsule_map"
+            tools:ignore="VectorDrawableCompat" />
 
         <Button
             android:id="@+id/button4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="뒤로가기"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:background="@drawable/back_arrow_2"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.049"
+            app:layout_constraintHorizontal_bias="0.041"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.105" />
-
-        <Button
-            android:id="@+id/button5"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="팔로우"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.801"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.217"
-            tools:visibility="visible" />
-
-        <Button
-            android:id="@+id/button6"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="팔로워"
-            android:visibility="visible"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.801"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.552"
-            tools:visibility="visible" />
+            app:layout_constraintVertical_bias="0.07999998" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

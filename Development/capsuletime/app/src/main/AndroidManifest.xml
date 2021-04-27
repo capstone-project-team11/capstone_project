@@ -49,6 +49,8 @@
         <activity android:name=".mainpages.searchpage.searchpage" />
         <activity android:name=".mainpages.followpage.followpage" />
         <activity android:name=".mainpages.followpage.followerpage" />
+        <activity android:name=".mainpages.followpage.Userfollowerpage" />
+        <activity android:name=".mainpages.followpage.Userfollowpage" />
 
 
         <activity android:name="com.example.capsuletime.mainpages.ar.UnityPlayerActivity"

@@ -4,11 +4,13 @@ import android.Manifest;
 import android.content.ClipData;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
@@ -26,15 +28,21 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.capsuletime.CapsuleLockSettingLogData;
+import com.example.capsuletime.CapsuleLogData;
 import com.example.capsuletime.R;
 import com.example.capsuletime.RetrofitClient;
 import com.example.capsuletime.RetrofitInterface;
@@ -42,6 +50,7 @@ import com.example.capsuletime.Success;
 import com.example.capsuletime.User;
 import com.example.capsuletime.core.preferences.NickNameSharedPreferences;
 import com.example.capsuletime.login.login;
+import com.example.capsuletime.mainpages.capsulemap.PopUpActivity;
 import com.example.capsuletime.mainpages.mypage.setting.CustomSettingLockDialog;
 import com.google.android.material.tabs.TabLayout;
 import com.gun0912.tedpermission.PermissionListener;
@@ -74,7 +83,11 @@ public class ModifyCapsule extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE = 100;
     private int capsule_id;
     private String nick_name;
+    private String expire;
     private List<Uri> list;
+    private List<String> members;
+    private String[] array2;
+    private RequestBody expire_body;
     private Boolean EmptyUriListFlag;
     private Uri photoUri;
     private Uri cropUri;
@@ -85,21 +98,37 @@ public class ModifyCapsule extends AppCompatActivity {
     private String user_id;
     private CardView btn_imageClose;
     private User user;
+    private CapsuleLockSettingLogAdapter capsuleLockSettingLogAdapter;
+    private RecyclerView recyclerView;
+    private LinearLayoutManager linearLayoutManager;
+    private ArrayList<CapsuleLockSettingLogData> arrayList2;
     private TextView main_label;
+    private TextView tv_click;
+
     private int status_lock;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_modify_capsule);
 
-        final TextView main_label = (TextView) findViewById(R.id.date);
-        final TextView main_label2 = (TextView) findViewById(R.id.members);
+        main_label = (TextView) findViewById(R.id.date);
+        final TextView members = (TextView) findViewById(R.id.members0);
 
 
         RetrofitClient retrofitClient = new RetrofitClient(getApplicationContext());
         retrofitInterface = retrofitClient.retrofitInterface;
 
+        recyclerView = (RecyclerView)findViewById(R.id.rv);
+        linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(linearLayoutManager);
+
+        arrayList2 = new ArrayList<>();
+        capsuleLockSettingLogAdapter = new CapsuleLockSettingLogAdapter(arrayList2,this);
+        recyclerView.setAdapter(capsuleLockSettingLogAdapter);
+
         list = new ArrayList<>();
+
 
         Intent intent = getIntent();
         capsule_id = intent.getIntExtra("capsule_id",-1);
@@ -132,6 +161,10 @@ public class ModifyCapsule extends AppCompatActivity {
         Button switch1 = (Button)findViewById(R.id.switch1);
         EditText tv_title = (EditText)findViewById(R.id.tv_title);
         EditText tv_text = (EditText)findViewById(R.id.tv_text);
+        tv_click = (TextView)findViewById(R.id.lock_s);
+
+        tv_click.setVisibility(View.INVISIBLE);
+        btn_sett.setVisibility(View.INVISIBLE);
 
         viewPager = (ViewPager)findViewById(R.id.const_vp);
         tabLayout = (TabLayout)findViewById(R.id.tab_layout);
@@ -176,40 +209,68 @@ public class ModifyCapsule extends AppCompatActivity {
             public void onClick(View v) {
                 boolean isChecked;
                 if(main_label != null) {
-                    Log.d(TAG, main_label.toString());
-                    String sort;
-                    sort = main_label.getText().toString();
-                    Log.d(TAG, sort.toString());
+                    if(status_lock == 1) {
+                        arrayList2.clear();
+                        Log.d(TAG, main_label.toString());
+                        String sort;
+                        sort = main_label.getText().toString();
+                        Log.d(TAG, sort.toString());
                     /*String members = sort.substring(sort.length()-1, sort.length());
                     String members2 = sort.substring(sort.lastIndexOf("/[") +2);
                     Log.d(TAG, members2.toString());*/
-                    String[] array = sort.split("/");
-                    ArrayList<String> members3;
-                    for(int i =0; i< array.length; i++){
-                        System.out.println(array[i]);
-                    }
-                    String expire = array[0];
-                    System.out.println(expire);
-                    String Member = array[1];
-                    String Member2 = Member.substring(1,Member.length()-1);
-                    /*Member2.substring(1,Member.length()-2);*/
-                    System.out.println(Member2);
+                        String[] array = sort.split("/");
+                        ArrayList<String> members3;
+                        for (int i = 0; i < array.length; i++) {
+                            System.out.println(array[i]);
+                        }
+                        String expire = array[0];
+                        System.out.println(expire);
+                        String Member = array[1];
+                        String Member2 = Member.substring(1, Member.length() - 1);
+                        /*Member2.substring(1,Member.length()-2);*/
+                        System.out.println(Member2);
 
-                    String[] array2 = Member2.split(", ");
-                    List<String> arrayList = new ArrayList<>();
+                        String[] array2 = Member2.split(", ");
+                        Log.d(TAG, "어레이2 : " + array2[0]);
+                        List<String> arrayList = new ArrayList<>();
 
-                    for(int i =0; i< array2.length; i++){
+                        arrayList.add(expire.substring(2,10));
+                        arrayList.add(expire.substring(11,16));
+
+                        for (int i = 0; i < array2.length; i++) {
 
                             arrayList.add(array2[i]);
                             System.out.println(array2[i]);
 
+                        }
+
+
+
+
+                        int lock_count = arrayList.size();
+                        Log.d(TAG, "members : " + arrayList.toString());
+                        Log.d(TAG, "expire : " + expire.toString());
+                        Log.d(TAG, "F4F Checked : " + lock_count);
+                        Log.d(TAG, "Status_lock :" + status_lock);
+
+                        for(int i = 0 ; i < arrayList.size(); i++){
+                            CapsuleLockSettingLogData capsuleLockSettingLogData = new CapsuleLockSettingLogData(arrayList.get(i),0);
+
+                            arrayList2.add(capsuleLockSettingLogData);
+                        }
+
+                        /*CapsuleLockSettingLogData capsuleLockSettingLogData = new CapsuleLockSettingLogData(expire.substring(2,10),0);
+
+                        arrayList2.add(capsuleLockSettingLogData);*/
+
+                        capsuleLockSettingLogAdapter.notifyDataSetChanged();
+
+                    } else {
+
+                        arrayList2.clear();
+                        capsuleLockSettingLogAdapter.notifyDataSetChanged();
                     }
 
-                    int lock_count = arrayList.size();
-                    Log.d(TAG,"members : "+arrayList.toString());
-                    Log.d(TAG,"expire : " + expire.toString());
-                    Log.d(TAG,"F4F Checked : "+lock_count);
-                    Log.d(TAG,"Status_lock :"+status_lock);
 
                 }
             }
@@ -217,18 +278,31 @@ public class ModifyCapsule extends AppCompatActivity {
 
         Switch switchButton = (Switch) findViewById(R.id.switch1);
         switchButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
                     CustomSettingLockDialog custom_dlg = new CustomSettingLockDialog(ModifyCapsule.this);
-                    custom_dlg.callFunction(main_label, main_label);
+                    custom_dlg.callFunction(main_label,
+                            main_label);
+
                     status_lock = 1;
+                    tv_click.setVisibility(View.VISIBLE);
+                    btn_sett.setVisibility(View.VISIBLE);
                 }else{
                     status_lock = 0;
+                    arrayList2.clear();
+                    capsuleLockSettingLogAdapter.notifyDataSetChanged();
+                    tv_click.setVisibility(View.INVISIBLE);
+                    btn_sett.setVisibility(View.INVISIBLE);
                 }
             }
         });
+
+
+
+
+
+
 
         btn_imageClose.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -250,42 +324,48 @@ public class ModifyCapsule extends AppCompatActivity {
             public void onClick(View v) {
 
                 if(main_label != null) {
+                   if(status_lock == 1) {
 
-                    Log.d(TAG, main_label.toString());
-                    String sort;
-                    sort = main_label.getText().toString();
-                    Log.d(TAG, sort.toString());
+                       Log.d(TAG, main_label.toString());
+                       String sort;
+                       sort = main_label.getText().toString();
+                       Log.d(TAG, sort.toString());
                     /*String members = sort.substring(sort.length()-1, sort.length());
                     String members2 = sort.substring(sort.lastIndexOf("/[") +2);
                     Log.d(TAG, members2.toString());*/
-                    String[] array = sort.split("/");
-                    ArrayList<String> members3;
-                    for (int i = 0; i < array.length; i++) {
-                        System.out.println(array[i]);
-                    }
+                       String[] array = sort.split("/");
+                       ArrayList<String> members3;
+                       for (int i = 0; i < array.length; i++) {
+                           System.out.println(array[i]);
+                       }
 
-                        String expire = array[0];
-                        System.out.println(expire);
-                        String Member = array[1];
+                       expire = array[0];
+                       System.out.println(expire);
+                       String Member = array[1];
 
-                        String Member2 = Member.substring(1, Member.length() - 1);
-                        /*Member2.substring(1,Member.length()-2);*/
-                        System.out.println(Member2);
+                       String Member2 = Member.substring(1, Member.length() - 1);
+                       /*Member2.substring(1,Member.length()-2);*/
+                       System.out.println(Member2);
 
 
-                        String[] array2 = Member2.split(", ");
-                        List<String> members = new ArrayList<>();
+                       array2 = Member2.split(", ");
+                       /*List<String> members = new ArrayList<>();
 
-                        for (int i = 0; i < array2.length; i++) {
+                       for (int i = 0; i < array2.length; i++) {
 
-                            members.add(array2[i]);
-                            System.out.println(array2[i]);
-                        }
-                        //int lock_count = arrayList.size();
-                        //Log.d(TAG, "members : " + arrayList.toString());
-                        Log.d(TAG, "expire : " + expire.toString());
-                        //Log.d(TAG, "F4F Checked : " + lock_count);
-                        Log.d(TAG, "Status_lock :" + status_lock);
+                           members.add(array2[i]);
+                           System.out.println(array2[i]);
+                       }*/
+
+                       //int lock_count = arrayList.size();
+                       //Log.d(TAG, "members : " + arrayList.toString());
+                       Log.d(TAG, "expire : " + expire.toString());
+                       //Log.d(TAG, "F4F Checked : " + lock_count);
+                       Log.d(TAG, "Status_lock :" + status_lock);
+
+                       expire_body = RequestBody.create(MediaType.parse("text/plain"), expire);
+                   }
+
 
 
                     // 이미지 등록
@@ -298,7 +378,6 @@ public class ModifyCapsule extends AppCompatActivity {
                     RequestBody id_body = RequestBody.create(MediaType.parse("text/plain"), Integer.toString(capsule_id));
                     RequestBody title_body = RequestBody.create(MediaType.parse("text/plain"), title);
                     RequestBody text_body = RequestBody.create(MediaType.parse("text/plain"), text);
-                    RequestBody expire_body = RequestBody.create(MediaType.parse("text/plain"), expire);
                     //RequestBody members_body = RequestBody.create(MediaType.parse("text/plain"), arrayList.toString());
 
                 /*
@@ -366,6 +445,13 @@ public class ModifyCapsule extends AppCompatActivity {
                                 }
                             });
                         } else if (status_lock == 1) {
+                            List<String> members = new ArrayList<>();
+
+                            for (int i = 0; i < array2.length; i++) {
+
+                                members.add(array2[i]);
+                                System.out.println(array2[i]);
+                            }
                             retrofitInterface.requestPutLockCapsuleWithImages(id_body, title_body, text_body, expire_body, members, parts).enqueue(new Callback<Success>() {
                                 @Override
                                 public void onResponse(Call<Success> call, Response<Success> response) {
@@ -437,6 +523,13 @@ public class ModifyCapsule extends AppCompatActivity {
 
 
                         } else if (status_lock == 1) {
+                            List<String> members = new ArrayList<>();
+
+                            for (int i = 0; i < array2.length; i++) {
+
+                                members.add(array2[i]);
+                                System.out.println(array2[i]);
+                            }
 
                             retrofitInterface.requestPutLockCapsule(capsule_id, title, text, expire, members).enqueue(new Callback<Success>() {
                                 @Override
@@ -495,6 +588,8 @@ public class ModifyCapsule extends AppCompatActivity {
             Log.d(TAG,uri.getPath() + "- file exist not");
         }
     }
+
+
 
     PermissionListener permissionListener = new PermissionListener() {
         @Override

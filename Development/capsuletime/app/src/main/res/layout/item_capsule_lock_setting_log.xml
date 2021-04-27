@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_capsule_frame"
+    android:background="@android:color/transparent"
+    android:layout_width="105dp"
+    android:layout_height="50dp">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/cl_capsule"
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:layout_marginTop="7.5dp"
+            android:layout_marginBottom="5dp"
+            android:background="@drawable/radius_capsule_lock_log"
+            >
+
+            <ImageView
+                android:id="@+id/lock"
+                android:layout_width="100dp"
+                android:layout_height="34dp"
+                tools:srcCompat="@drawable/radius_capsule_lock_log" />
+
+
+            <TextView
+                android:id="@+id/tv_title"
+                android:layout_width="100dp"
+                android:layout_height="34dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:singleLine="true"
+                android:text="title"
+                android:textColor="#404040"
+                android:textSize="13sp"
+                app:layout_constraintBottom_toTopOf="@+id/imageView"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
+
+
+
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

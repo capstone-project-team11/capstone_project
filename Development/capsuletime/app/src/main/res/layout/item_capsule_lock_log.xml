@@ -9,15 +9,19 @@
 
     <FrameLayout
         android:background="@android:color/transparent"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" >
+        android:layout_width="350dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" >
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_capsule"
             android:layout_width="320dp"
             android:layout_height="68dp"
             android:layout_marginTop="7.5dp"
-            android:layout_marginLeft="60dp"
+            android:layout_marginLeft="30dp"
             android:layout_marginBottom="5dp"
 
             android:background="@drawable/radius_capsule_log_lock">
@@ -30,12 +34,32 @@
                 android:ellipsize="end"
                 android:singleLine="true"
                 android:text="임시저장된 캡슐"
-                android:textColor="#ACACAC"
+                android:textColor="#ececec"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.758"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                />
+
+            <TextView
+                android:id="@+id/tv_location"
+                android:layout_width="191dp"
+                android:layout_height="17dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="36dp"
+                android:layout_marginRight="36dp"
+                android:layout_marginBottom="12dp"
+                android:ellipsize="end"
+                android:singleLine="true"
+                android:text="location"
+                android:textColor="#404040"
+                android:textSize="5pt"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_title"
+                tools:visibility="invisible" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -44,15 +68,13 @@
             android:id="@+id/iv_thumb_card"
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:layout_marginStart="26dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginTop="13dp"
             android:layout_marginEnd="24dp"
             android:layout_marginRight="24dp"
             android:layout_marginBottom="10dp"
             android:background="@android:color/transparent"
             android:shape="ring"
-            app:cardBackgroundColor="#C8C8C8"
+            app:cardBackgroundColor="#6b6b6b"
             app:cardCornerRadius="50dp"
             app:cardElevation="0dp"
             app:cardPreventCornerOverlap="true"
@@ -62,11 +84,11 @@
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_thumb"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="9dp"
-                android:src="@drawable/capsule_marker_gray" />
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="13dp"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/locked_icon" />
 
         </androidx.cardview.widget.CardView>
     </FrameLayout>

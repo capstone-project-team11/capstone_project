@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 
+import java.text.DateFormat;
 import java.util.TreeSet;
 import android.util.Log;
 import android.view.Gravity;
@@ -65,6 +66,7 @@ public class CustomSettingLockDialog {
     private DatePickerDialog.OnDateSetListener callbackMethod;
 
     Calendar myCalendar = Calendar.getInstance();
+    Calendar minData = Calendar.getInstance();
 
     DatePickerDialog.OnDateSetListener myDatePicker = new DatePickerDialog.OnDateSetListener() {
         @Override
@@ -144,7 +146,7 @@ public class CustomSettingLockDialog {
 
 
         String inStr = (nick_name != null) ? nick_name : user.getNick_name();
-        retrofitInterface.requestFollower(inStr).enqueue(new Callback<List<User>>() {
+        retrofitInterface.requestF4F(inStr).enqueue(new Callback<List<User>>() {
             @Override
             public void onResponse(Call<List<User>> call, Response<List<User>> response) {
                 userList = response.body();
@@ -155,43 +157,14 @@ public class CustomSettingLockDialog {
                         String first_name = user.getFirst_name();
                         String last_name = user.getLast_name();
                         String image_url = user.getImage_url();
+                        String nick_name3 = user.getDest_nick_name();
 
-                        retrofitInterface.requestFollow(nick_name2).enqueue(new Callback<List<User>>() {
-                            @Override
-                            public void onResponse(Call<List<User>> call, Response<List<User>> response) {
-                                userList = response.body();
-                                Log.d(TAG, userList.toString());
-                                if (userList != null) {
-                                    for (User user : userList) {
-                                        String nick_name3 = user.getNick_name();
-
-
-                                        if(inStr.equals(nick_name3)) {
-                                            Log.d(TAG, nick_name.toString() + first_name.toString() + last_name.toString() + image_url.toString() + isChecked);
-
-
-                                            Locked_Capsule locked = new Locked_Capsule(image_url, nick_name2, last_name + first_name, isChecked);
-                                            arrayList.add(locked);
-                                            settingFriendLogAdapter.notifyDataSetChanged(); // redirect
-                                        }
-
-
-                                    }
-                                }
-                            }
-
-                            @Override
-                            public void onFailure(Call<List<User>> call, Throwable t) {
-
-                            }
-                        });
-
-                        /*Log.d(TAG, nick_name2.toString() + first_name.toString() + last_name.toString() + image_url.toString() + isChecked);
+                        Log.d(TAG, nick_name2.toString() + first_name.toString() + last_name.toString() + image_url.toString() + isChecked);
 
 
                         Locked_Capsule locked = new Locked_Capsule(image_url, nick_name2, last_name + first_name, isChecked);
                         arrayList.add(locked);
-                        settingFriendLogAdapter.notifyDataSetChanged(); // redirect*/
+                        settingFriendLogAdapter.notifyDataSetChanged(); // redirect
                     }
                 }
             }
@@ -239,6 +212,14 @@ public class CustomSettingLockDialog {
 
                     }
                 }, year,month,dayofmonth);
+
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd", Locale.getDefault());
+
+                Log.d(TAG,"시간!! " + sdf);
+                minData.add(Calendar.DATE,+1);
+
+                /*minData.set(2020,9,19);*/
+                mDatePicker.getDatePicker().setMinDate(minData.getTime().getTime());
                 mDatePicker.setTitle("Select Date");
                 mDatePicker.show();
 
@@ -305,6 +286,8 @@ public class CustomSettingLockDialog {
 
                     Log.d(TAG, et_Date.getText().toString() + " " + et_time.getText().toString() + ":10 " + "" + result);
                     main_label.setText(et_Date.getText().toString() + " " + et_time.getText().toString() + ":10" + "/" + result);
+
+
                     dlg.dismiss();
                 }
 

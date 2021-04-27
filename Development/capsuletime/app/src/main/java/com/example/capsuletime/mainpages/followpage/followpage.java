@@ -20,6 +20,8 @@ import com.example.capsuletime.RetrofitClient;
 import com.example.capsuletime.RetrofitInterface;
 import com.example.capsuletime.User;
 import com.example.capsuletime.mainpages.mypage.CapsuleLogAdapter;
+import com.example.capsuletime.mainpages.mypage.mypage;
+import com.example.capsuletime.mainpages.searchpage.searchpage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,7 +99,12 @@ public class followpage extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                finish();
+
+                Intent intent = new Intent(getApplicationContext(), mypage.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+                overridePendingTransition(0,0);
             }
         });
 
