@@ -3,9 +3,9 @@
 타임 캡슐을 모티브로한 위치기반 SNS 서비스
 
 ## 1. 팀원과 역할
-- [김태완](./document/개인별자료/김태완/) - AR
-- [전승원](./document/개인별자료/전승원/) - Backend, Android
-- [박원진](./document/개인별자료/박원진/) - Android, 디자인
+- [김태완](./documents/개인별자료/김태완/) - AR
+- [전승원](./documents/개인별자료/전승원/) - Backend, Android
+- [박원진](./documents/개인별자료/박원진/) - Android, 디자인
 
 ## 2. 코드 저장소
 
